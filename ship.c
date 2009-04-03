@@ -145,7 +145,7 @@ void ship_move_backwards(struct ship *s)
 	rad = deg_to_rad(s->angle);
 
 	s->x -= cos(rad)*s->speed;
-	s->y -= cos(rad)*s->speed;
+	s->y -= sin(rad)*s->speed;
 }
 
 void ship_rotate_cw(struct ship *s)
