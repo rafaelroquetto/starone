@@ -13,13 +13,7 @@
 #include "beam.h"
 #include "list.h"
 #include "util.h"
-
-enum {
-	WINDOW_WIDTH = 800,
-	WINDOW_HEIGHT = 600,
-	NPASSES = 40,
-	FPS = 30,
-};
+#include "defs.h"
 
 enum {
 	PAD_UP = 1,
@@ -33,7 +27,7 @@ static const char *WINDOW_CAPTION = "Shitty game";
 
 static struct ship *enterprise = NULL;
 
-static struct node *beam_list = NULL;
+static struct node *ship_list = NULL;
 
 static unsigned pad_state;
 
@@ -78,12 +72,6 @@ initialize_opengl()
 }
 
 static void
-initialize_data()
-{
-	enterprise = ship_new();
-}
-
-static void
 check_gl_errors()
 {
 	GLenum error;
@@ -99,56 +87,33 @@ tear_down_sdl()
 }
 
 static void
-initialize(int argc, char *argv[])
-{
-	initialize_sdl();
-	initialize_opengl();
-	initialize_data();
-}
-
-static void
-update_beams()
+update_ships()
 {
 	struct node *current;
-	struct beam *beam, *spare;
+	struct ship *s;
 
-	current = beam_list;
+	current = ship_list;
 
 	while (current) {
-		beam = (struct beam *) current->data;
-		beam_update(beam);
-		
-		current = current->next;
-	}
-
-
-	current = beam_list;
-
-	while (current != NULL) {
-		beam = (struct beam *) current->data;
-
-		if (beam_out_of_bounds(beam,
-			WINDOW_WIDTH, WINDOW_HEIGHT)) {
-
-			beam_list = list_remove(beam_list, current,
-					(void *) &spare);
-
-			beam_destroy(spare);
-		}
+		s = (struct ship *) current->data;
+		ship_update(s);
 
 		current = current->next;
 	}
 }
 
 static void
-draw_beams()
+draw_ships()
 {
 	struct node *c;
 
-	c = beam_list;
+	if (ship_list == NULL)
+		return;
+
+	c = ship_list;
 
 	while (c != NULL) {
-		beam_draw((struct beam *) c->data);
+		ship_draw((struct ship *) c->data);
 		c = c->next;
 	}
 }
@@ -156,8 +121,7 @@ draw_beams()
 static void
 do_test()
 {
-	ship_draw(enterprise);
-	draw_beams();
+	draw_ships();
 }
 
 static void
@@ -168,19 +132,29 @@ redraw()
 	SDL_GL_SwapBuffers();
 }
 
-static void
-create_beam(const struct ship *s)
+static struct ship *
+create_ship(int x, int y)
 {
-	struct beam *b;
-	float x0, y0;
+	struct ship *s = ship_new(x, y);
 
-	x0 = s->x + SHIP_WIDTH*cos(deg_to_rad(s->angle));
-	y0 = s->y + SHIP_WIDTH*sin(deg_to_rad(s->angle));
+	ship_list = list_push(ship_list,
+			(void *) s);
 
-	b = beam_new(x0, y0, s->angle);
+	return s;
+}
 
-	beam_list = list_push(beam_list, (void *) b);
+static void
+initialize_data()
+{
+	enterprise = create_ship(50, 50);
+}
 
+static void
+initialize(int argc, char *argv[])
+{
+	initialize_sdl();
+	initialize_opengl();
+	initialize_data();
 }
 
 static void
@@ -213,7 +187,7 @@ handle_events()
 					} else if (event.key.keysym.sym == SDLK_RIGHT) {
 						pad_state |= PAD_RIGHT;
 					} else if (event.key.keysym.sym == SDLK_SPACE) {
-						pad_state |= PAD_FIRE;
+							pad_state |= PAD_FIRE;
 					}
 					break;
 
@@ -244,11 +218,14 @@ handle_events()
 			ship_rotate_countercw(enterprise);
 		if (pad_state & PAD_RIGHT)
 			ship_rotate_cw(enterprise);
-		if (pad_state & PAD_FIRE)
-			create_beam(enterprise);
+		if (pad_state & PAD_FIRE) {
+			if (ship_can_fire(enterprise)) {
+				ship_fire_front(enterprise);
+			}
+		}
 
 		redraw();
-		update_beams();
+		update_ships();
 
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);
 
