@@ -16,7 +16,7 @@ static const int INI_BEAM_COUNT = 5;
 
 
 static void
-draw_beams(struct ship *s)
+draw_beams(const struct ship *s)
 {
 	struct node *c;
 

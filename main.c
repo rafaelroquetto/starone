@@ -5,10 +5,13 @@
 #include <errno.h>
 #include <unistd.h>
 #include <SDL.h>
-#include <GL/glew.h>
+#include <GL/gl.h>
+#include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "panic.h"
+#include "asteroid.h"
 #include "ship.h"
 #include "beam.h"
 #include "list.h"
@@ -23,11 +26,15 @@ enum {
 	PAD_FIRE = 16,
 };
 
+enum { MAX_ASTEROIDS = 20};
+
 static const char *WINDOW_CAPTION = "Shitty game";
 
 static struct ship *enterprise = NULL;
 
 static struct node *ship_list = NULL;
+
+static struct node *asteroid_list = NULL;
 
 static unsigned pad_state;
 
@@ -87,6 +94,40 @@ tear_down_sdl()
 }
 
 static void
+update_asteroids()
+{
+	struct node *current;
+	struct asteroid *a;
+	struct asteroid *spare;
+
+	current = asteroid_list;
+
+	while (current) {
+		a = (struct asteroid *) current->data;
+		asteroid_update(a);
+
+		current = current->next;
+	}
+
+	current = asteroid_list;
+
+	while (current) {
+		a = (struct asteroid *) current->data;
+
+		if (asteroid_out_of_bounds(a,
+			WINDOW_WIDTH, WINDOW_HEIGHT)) {
+
+			asteroid_list = list_remove(asteroid_list,
+					current, (void *) &spare);
+
+			asteroid_destroy(spare);
+		}
+
+		current = current->next;
+	}
+}
+
+static void
 update_ships()
 {
 	struct node *current;
@@ -119,9 +160,26 @@ draw_ships()
 }
 
 static void
+draw_asteroids()
+{
+	struct node *c;
+
+	if (asteroid_list == NULL)
+		return;
+
+	c = asteroid_list;
+
+	while (c != NULL) {
+		asteroid_draw((struct asteroid *) c->data);
+		c = c->next;
+	}
+}
+
+static void
 do_test()
 {
 	draw_ships();
+	draw_asteroids();
 }
 
 static void
@@ -144,9 +202,30 @@ create_ship(int x, int y)
 }
 
 static void
+create_asteroids()
+{
+	int i, x, y, ang;
+	struct asteroid *a;
+
+	srand(time(NULL));
+
+	for (i = 0; i < MAX_ASTEROIDS; i++) {
+		x = rand() % WINDOW_WIDTH;
+		y = rand() % WINDOW_HEIGHT;
+		ang = rand() % 360;
+
+		a = asteroid_new(x, y, ang);
+
+		asteroid_list = list_push(asteroid_list,
+				(void *) a);
+	}
+}
+
+static void
 initialize_data()
 {
 	enterprise = create_ship(50, 50);
+	create_asteroids();
 }
 
 static void
@@ -227,7 +306,11 @@ handle_events()
 		redraw();
 		update_ships();
 
+		update_asteroids();
+
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);
+
+		check_gl_errors();
 
 		if (delay > 0)
 			SDL_Delay(delay);

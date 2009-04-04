@@ -35,7 +35,7 @@ void beam_draw(const struct beam *b)
 	glTranslatef(b->x, b->y, 0);
 	glRotatef(b->angle, 0, 0, 1);
 
-	glBegin(GL_LINE);
+	glBegin(GL_LINES);
 	glVertex2f(0, 0);
 	glVertex2f(10, 0);
 	glEnd();

@@ -1,9 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -g
-OBJS = ship.o main.o panic.o util.o beam.o list.o
+OBJS = asteroid.o ship.o main.o panic.o util.o beam.o list.o
 OUTPUT = starone
 
-LIBS += -lm -ldl `sdl-config --libs` -lGL -lGLU -lGLEW -lpng
+LIBS += -lm -ldl `sdl-config --libs` -lGL -lGLU -lpng
 CFLAGS += `sdl-config --cflags` # -DWRITE_PPM
 
 $(OUTPUT): $(OBJS)
@@ -16,6 +16,7 @@ clean:
 	find \( -name core -o -name '*.o' -o -name '*.a' \) -exec rm -f {} \;
 	rm $(OUTPUT)
 
+asteroid.o: asteroid.c
 main.o:	main.c
 panic.o: panic.c
 ship.o: ship.c
