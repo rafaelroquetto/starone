@@ -44,7 +44,7 @@ initialize_sdl()
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_FULLSCREEN | SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -267,6 +267,8 @@ handle_events()
 						pad_state |= PAD_RIGHT;
 					} else if (event.key.keysym.sym == SDLK_SPACE) {
 							pad_state |= PAD_FIRE;
+					} else if (event.key.keysym.sym == SDLK_ESCAPE) {
+						running = 0;
 					}
 					break;
 
