@@ -20,7 +20,7 @@ draw_beams(const struct ship *s)
 {
 	struct node *c;
 
-	c = s->beam_list;
+	c = s->beam_list->first;
 
 	while (c != NULL) {
 		beam_draw((struct beam *) c->data);
@@ -39,7 +39,7 @@ create_beam(struct ship *s)
 
 	b = beam_new(x0, y0, s->angle);
 
-	s->beam_list = list_push(s->beam_list, (void *) b);
+	list_add(s->beam_list, (void *) b);
 
 }
 
@@ -49,12 +49,12 @@ update_beams(struct ship *s)
 	struct node *current;
 	struct beam *beam, *spare;
 
-	current = s->beam_list;
+	current = s->beam_list->first;
 
 	if (current == NULL)
 		return;
 
-	current = s->beam_list;
+	current = s->beam_list->first;
 
 	while (current != NULL) {
 		struct node *next = current->next;
@@ -64,8 +64,7 @@ update_beams(struct ship *s)
 		if (beam_out_of_bounds(beam,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {
 
-			s->beam_list = list_remove(s->beam_list, current,
-					(void *) &spare);
+			spare = list_remove(s->beam_list, current);
 
 			beam_destroy(spare);
 		}
@@ -98,7 +97,7 @@ void ship_init(struct ship *s, int x, int y)
 	s->angle = 0;
 	s->speed = INI_SPEED;
 	s->beam_count = INI_BEAM_COUNT;
-	s->beam_list = NULL;
+	s->beam_list = list_new();
 }
 
 void ship_draw(const struct ship *s)
@@ -172,7 +171,7 @@ int ship_can_fire(const struct ship *s)
 	return (s->beam_count == 0);
 }
 
-struct node *
+struct list *
 ship_get_beam_list(const struct ship *s)
 {
 	return s->beam_list;

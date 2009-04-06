@@ -13,7 +13,7 @@ struct ship
 	float angle;
 	float speed;
 
-	struct node *beam_list;
+	struct list *beam_list;
 };
 
 struct ship *ship_new(int x, int y);
@@ -30,7 +30,7 @@ void ship_fire_front(struct ship *s);
 
 int ship_can_fire(const struct ship *s);
 
-struct node *
+struct list *
 ship_get_beam_list(const struct ship *s);
 
 #define SHIP_WIDTH 25.f

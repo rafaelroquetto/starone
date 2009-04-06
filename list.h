@@ -6,15 +6,18 @@ struct node
 	void *data;
 
 	struct node *next;
+	struct node *prev;
 };
 
-struct node *
-list_push(struct node *h, void *data);
+struct list
+{
+	struct node *first;
+};
 
-struct node *
-list_pop(struct node *h, void **data);
+struct list *
+list_new();
 
-struct node *
-list_remove(struct node *h, struct node *n, void **data);
+void list_add(struct list *l, void *data);
+void *list_remove(struct list *l, struct node *n);
 
 #endif /* LIST_H */

@@ -32,9 +32,9 @@ static const char *WINDOW_CAPTION = "Shitty game";
 
 static struct ship *enterprise = NULL;
 
-static struct node *ship_list = NULL;
+static struct list *ship_list = NULL;
 
-static struct node *asteroid_list = NULL;
+static struct list *asteroid_list = NULL;
 
 static unsigned pad_state;
 
@@ -121,13 +121,13 @@ check_colisions()
 
 	struct node *b;
 	struct node *a;
-	struct node *beam_list = ship_get_beam_list(enterprise);
+	struct list *beam_list = ship_get_beam_list(enterprise);
 
-	for (b = beam_list; b; b = b->next) {
+	for (b = beam_list->first; b; b = b->next) {
 
 		beam = (struct beam *) b->data;
 
-		for (a = asteroid_list; a; a = a->next) {
+		for (a = asteroid_list->first; a; a = a->next) {
 
 			asteroid = (struct asteroid *) a->data;
 
@@ -146,7 +146,7 @@ update_asteroids()
 	struct asteroid *spare;
 
 
-	current = asteroid_list;
+	current = asteroid_list->first;
 
 	while (current) {
 		struct node *next = current->next;
@@ -157,8 +157,7 @@ update_asteroids()
 		if (a->remove || asteroid_out_of_bounds(a,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {
 
-			asteroid_list = list_remove(asteroid_list,
-					current, (void *) &spare);
+			spare = list_remove(asteroid_list, current);
 
 			asteroid_destroy(spare);
 		}
@@ -173,7 +172,7 @@ update_ships()
 	struct node *current;
 	struct ship *s;
 
-	current = ship_list;
+	current = ship_list->first;
 
 	while (current) {
 		s = (struct ship *) current->data;
@@ -191,7 +190,7 @@ draw_ships()
 	if (ship_list == NULL)
 		return;
 
-	c = ship_list;
+	c = ship_list->first;
 
 	while (c != NULL) {
 		ship_draw((struct ship *) c->data);
@@ -207,7 +206,7 @@ draw_asteroids()
 	if (asteroid_list == NULL)
 		return;
 
-	c = asteroid_list;
+	c = asteroid_list->first;
 
 	while (c != NULL) {
 		asteroid_draw((struct asteroid *) c->data);
@@ -235,8 +234,10 @@ create_ship(int x, int y)
 {
 	struct ship *s = ship_new(x, y);
 
-	ship_list = list_push(ship_list,
-			(void *) s);
+	if (ship_list == NULL)
+		ship_list = list_new();
+
+	list_add(ship_list, (void *) s);
 
 	return s;
 }
@@ -246,6 +247,9 @@ create_asteroids()
 {
 	int i, x, y, direction, radius;
 	struct asteroid *a;
+
+	if (asteroid_list == NULL)
+		asteroid_list = list_new();
 
 	srand(time(NULL));
 
@@ -257,8 +261,7 @@ create_asteroids()
 
 		a = asteroid_new(x, y, radius, direction);
 
-		asteroid_list = list_push(asteroid_list,
-				(void *) a);
+		list_add(asteroid_list, (void *) a);
 	}
 }
 

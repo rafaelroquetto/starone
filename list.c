@@ -1,58 +1,70 @@
-#include <malloc.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "list.h"
 
-struct node *
-list_push(struct node *h, void *data)
+
+void dump_list(const struct list *l)
+{
+	struct node *n = l->first;
+	while (n) {
+		printf("n == %p\n", n);
+		printf("n->data == %p\n", n->data);
+		printf("n->prev == %p\n", n->prev);
+		printf("n->next == %p\n", n->next);
+		printf("-----\n");
+		n = n->next;
+	}
+
+	putchar('\n');
+}
+
+struct list *
+list_new()
+{
+	struct list *l;
+
+	l = malloc(sizeof *l);
+
+	l->first = NULL;
+
+	return l;
+}
+
+void
+list_add(struct list *l, void *data)
 {
 	struct node *n;
+	struct node *last;
 
 	n = malloc(sizeof *n);
-	n->next = h;
 	n->data = data;
 
-	return n;
+	n->next = l->first;
+	n->prev = NULL;
+
+	if (l->first)
+		l->first->prev = n;
+
+	l->first = n;
+
 }
 
-struct node *
-list_pop(struct node *h, void **data)
+void *
+list_remove(struct list *l, struct node *n)
 {
-	struct node *n;
-
-	n = h->next;
-
-	*data = h->data;
-
-	free(h);
-
-	return n;
-}
-
-struct node *
-list_remove(struct node *h, struct node *n,
-		void **data)
-{
-	struct node *c;
-
-	if (n == h) {
-		c = h->next;
-
-		*data = h->data;
-		free(h);
-
-		return c;
+	void *data = n->data;
+	if (n->prev) {
+		n->prev->next = n->next;
+	} else {
+		l->first = n->next;
 	}
 
-	c = h;
-
-	while (c != NULL) {
-		if (c->next == n) {
-			c->next = n->next;
-			*data = n->data;
-			free(n);
-		}
-
-		c = c->next;
+	if (n->next) {
+		n->next->prev = n->prev;
 	}
 
-	return h;
+	free (n);
+
+	return data;
 }
+
