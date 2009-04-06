@@ -7,6 +7,7 @@
 
 static const float ASTEROID_SPEED = 1.f;
 static const int NUM_STEPS = 10;
+static const float MIN_RADIUS = 6.f;
 
 struct asteroid *
 asteroid_new(float x, float y, float radius, float direction)
@@ -17,7 +18,7 @@ asteroid_new(float x, float y, float radius, float direction)
 
 	a->x = x;
 	a->y = y;
-	a->radius = radius;
+	a->radius = (radius > MIN_RADIUS) ? radius : MIN_RADIUS;
 	a->direction = direction;
 	a->remove = 0;
 
