@@ -26,7 +26,7 @@ enum {
 	PAD_FIRE = 16,
 };
 
-enum { MAX_ASTEROIDS = 20};
+enum { MAX_ASTEROIDS = 100};
 
 static const char *WINDOW_CAPTION = "Shitty game";
 
@@ -145,14 +145,6 @@ update_asteroids()
 	struct asteroid *a;
 	struct asteroid *spare;
 
-	current = asteroid_list;
-
-	while (current) {
-		a = (struct asteroid *) current->data;
-		asteroid_update(a);
-
-		current = current->next;
-	}
 
 	current = asteroid_list;
 
@@ -160,6 +152,7 @@ update_asteroids()
 		struct node *next = current->next;
 
 		a = (struct asteroid *) current->data;
+		asteroid_update(a);
 
 		if (a->remove || asteroid_out_of_bounds(a,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {

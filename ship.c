@@ -54,18 +54,12 @@ update_beams(struct ship *s)
 	if (current == NULL)
 		return;
 
-	while (current) {
-		beam = (struct beam *) current->data;
-		beam_update(beam);
-		
-		current = current->next;
-	}
-
-
 	current = s->beam_list;
 
 	while (current != NULL) {
+		struct node *next = current->next;
 		beam = (struct beam *) current->data;
+		beam_update(beam);
 
 		if (beam_out_of_bounds(beam,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {
@@ -76,7 +70,7 @@ update_beams(struct ship *s)
 			beam_destroy(spare);
 		}
 
-		current = current->next;
+		current = next;
 	}
 }
 
