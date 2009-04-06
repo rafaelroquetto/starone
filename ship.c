@@ -178,3 +178,8 @@ int ship_can_fire(const struct ship *s)
 	return (s->beam_count == 0);
 }
 
+struct node *
+ship_get_beam_list(const struct ship *s)
+{
+	return s->beam_list;
+}

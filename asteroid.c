@@ -6,9 +6,10 @@
 #include "util.h"
 
 static const float ASTEROID_SPEED = 1.f;
+static const int NUM_STEPS = 10;
 
 struct asteroid *
-asteroid_new(float x, float y, float ang)
+asteroid_new(float x, float y, float radius, float direction)
 {
 	struct asteroid *a;
 
@@ -16,7 +17,9 @@ asteroid_new(float x, float y, float ang)
 
 	a->x = x;
 	a->y = y;
-	a->angle = ang;
+	a->radius = radius;
+	a->direction = direction;
+	a->remove = 0;
 
 	return a;
 }
@@ -28,6 +31,10 @@ void asteroid_destroy(struct asteroid *a)
 
 void asteroid_draw(struct asteroid *a)
 {
+	int i;
+	float b = 0;
+	float db = 2.*M_PI/NUM_STEPS;
+
 	glColor3f(1, 1, 1);
 
 	glPushMatrix();
@@ -35,11 +42,17 @@ void asteroid_draw(struct asteroid *a)
 
 	glTranslatef(a->x, a->y, 0);
 
-	glBegin(GL_QUADS);
-	glVertex2f(-5.f, -5.f);
-	glVertex2f(-5.f, 5.f);
-	glVertex2f(5.f, 5.f);
-	glVertex2f(5.f, -5.f);
+	glBegin(GL_POLYGON);
+
+	for (i = 0; i < NUM_STEPS; i++) {
+		float x = a->radius*cos(b);
+		float y = a->radius*sin(b);
+
+		glVertex2f(x, y);
+
+		b += db;
+	}
+
 	glEnd();
 
 	glPopMatrix();
@@ -49,7 +62,7 @@ void asteroid_update(struct asteroid *a)
 {
 	float rad;
 
-	rad = deg_to_rad(a->angle);
+	rad = deg_to_rad(a->direction);
 
 	a->x += cos(rad)*ASTEROID_SPEED;
 	a->y += sin(rad)*ASTEROID_SPEED;
@@ -69,3 +82,7 @@ int asteroid_out_of_bounds(struct asteroid *a, int w, int h)
 	return obounds;
 }
 
+void asteroid_remove(struct asteroid *a)
+{
+	a->remove = 1;
+}

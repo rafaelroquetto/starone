@@ -6,15 +6,19 @@ struct asteroid
 	float x;
 	float y;
 
-	float angle;
+	float direction;
+	float radius;
+
+	int remove;
 };
 
 struct asteroid *
-asteroid_new(float x, float y, float angle);
+asteroid_new(float x, float y, float radius, float direction);
 
 void asteroid_destroy(struct asteroid *a);
 void asteroid_draw(struct asteroid *a);
 void asteroid_update(struct asteroid *a);
+void asteroid_remove(struct asteroid *a);
 
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h);
 

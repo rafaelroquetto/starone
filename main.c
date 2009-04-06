@@ -44,7 +44,7 @@ initialize_sdl()
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_FULLSCREEN | SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, /* SDL_FULLSCREEN |*/ SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -93,6 +93,51 @@ tear_down_sdl()
 	SDL_Quit();
 }
 
+static int
+beam_hit_asteroid(const struct beam *b,
+		const struct asteroid *a)
+{
+	float d_square;
+	float r_square;
+	float dx = (b->x - a->x);
+	float dy = (b->y - a->y);
+
+	d_square = dx*dx + dy*dy;
+
+	r_square = a->radius;
+	r_square *= r_square;
+
+	if (d_square < r_square)
+		return 1;
+	else
+		return 0;
+}
+
+static void
+check_colisions()
+{
+	struct asteroid *asteroid, *a_spare;
+	struct beam *beam, *b_spare;
+
+	struct node *b;
+	struct node *a;
+	struct node *beam_list = ship_get_beam_list(enterprise);
+
+	for (b = beam_list; b; b = b->next) {
+
+		beam = (struct beam *) b->data;
+
+		for (a = asteroid_list; a; a = a->next) {
+
+			asteroid = (struct asteroid *) a->data;
+
+			if (beam_hit_asteroid(beam, asteroid)) {
+				asteroid_remove(asteroid);
+			}
+		}
+	}
+}
+
 static void
 update_asteroids()
 {
@@ -112,9 +157,11 @@ update_asteroids()
 	current = asteroid_list;
 
 	while (current) {
+		struct node *next = current->next;
+
 		a = (struct asteroid *) current->data;
 
-		if (asteroid_out_of_bounds(a,
+		if (a->remove || asteroid_out_of_bounds(a,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {
 
 			asteroid_list = list_remove(asteroid_list,
@@ -123,7 +170,7 @@ update_asteroids()
 			asteroid_destroy(spare);
 		}
 
-		current = current->next;
+		current = next;
 	}
 }
 
@@ -204,7 +251,7 @@ create_ship(int x, int y)
 static void
 create_asteroids()
 {
-	int i, x, y, ang;
+	int i, x, y, direction, radius;
 	struct asteroid *a;
 
 	srand(time(NULL));
@@ -212,9 +259,10 @@ create_asteroids()
 	for (i = 0; i < MAX_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
 		y = rand() % WINDOW_HEIGHT;
-		ang = rand() % 360;
+		radius = rand() % 18;
+		direction = rand() % 360;
 
-		a = asteroid_new(x, y, ang);
+		a = asteroid_new(x, y, radius, direction);
 
 		asteroid_list = list_push(asteroid_list,
 				(void *) a);
@@ -306,8 +354,8 @@ handle_events()
 		}
 
 		redraw();
+		check_colisions();
 		update_ships();
-
 		update_asteroids();
 
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);

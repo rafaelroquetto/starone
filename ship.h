@@ -30,6 +30,8 @@ void ship_fire_front(struct ship *s);
 
 int ship_can_fire(const struct ship *s);
 
+struct node *
+ship_get_beam_list(const struct ship *s);
 
 #define SHIP_WIDTH 25.f
 #define SHIP_HEIGHT  10.f
