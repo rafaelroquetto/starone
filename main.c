@@ -116,8 +116,8 @@ beam_hit_asteroid(const struct beam *b,
 static void
 check_colisions()
 {
-	struct asteroid *asteroid, *a_spare;
-	struct beam *beam, *b_spare;
+	struct asteroid *asteroid;
+	struct beam *beam;
 
 	struct node *b;
 	struct node *a;

@@ -34,7 +34,6 @@ void
 list_add(struct list *l, void *data)
 {
 	struct node *n;
-	struct node *last;
 
 	n = malloc(sizeof *n);
 	n->data = data;
