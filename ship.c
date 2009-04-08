@@ -14,7 +14,20 @@ static const float MOVE_OFFSET = 5.0;
 static const float INI_SPEED = 7.0;
 static const int INI_BEAM_COUNT = 5;
 
-extern GLuint ship_texture;
+static GLuint texture;
+
+
+void
+ship_load_texture()
+{
+	struct image *asteroid;
+
+	asteroid = image_make_from_png("res/ship.png");
+
+	texture = image_to_opengl_texture(asteroid);
+
+	image_free(asteroid);
+}
 
 static void
 draw_beams(const struct ship *s)
@@ -112,9 +125,9 @@ void ship_draw(const struct ship *s)
 	glRotatef(s->angle, 0, 0, 1);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, ship_texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE);
 
 	glBegin(GL_QUADS);
 

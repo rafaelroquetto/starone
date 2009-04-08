@@ -40,18 +40,12 @@ static struct list *asteroid_list = NULL;
 
 static unsigned pad_state;
 
-GLuint ship_texture;
 
 static void
 load_textures()
 {
-	struct image *ship;
-
-	ship = image_make_from_png("res/ship.png");
-
-	ship_texture = image_to_opengl_texture(ship);
-
-	image_free(ship);
+	ship_load_texture();
+	asteroid_load_texture();
 }
 
 static void

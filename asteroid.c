@@ -4,10 +4,26 @@
 
 #include "asteroid.h"
 #include "util.h"
+#include "image.h"
+#include "gl_util.h"
 
 static const float ASTEROID_SPEED = 1.f;
 static const int NUM_STEPS = 10;
 static const float MIN_RADIUS = 6.f;
+
+static GLuint texture;
+
+void
+asteroid_load_texture()
+{
+	struct image *asteroid;
+
+	asteroid = image_make_from_png("res/asteroid.png");
+
+	texture = image_to_opengl_texture(asteroid);
+
+	image_free(asteroid);
+}
 
 struct asteroid *
 asteroid_new(float x, float y, float radius, float direction)
@@ -32,10 +48,6 @@ void asteroid_destroy(struct asteroid *a)
 
 void asteroid_draw(struct asteroid *a)
 {
-	int i;
-	float b = 0;
-	float db = 2.*M_PI/NUM_STEPS;
-
 	glColor3f(1, 1, 1);
 
 	glPushMatrix();
@@ -43,18 +55,28 @@ void asteroid_draw(struct asteroid *a)
 
 	glTranslatef(a->x, a->y, 0);
 
-	glBegin(GL_POLYGON);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);
 
-	for (i = 0; i < NUM_STEPS; i++) {
-		float x = a->radius*cos(b);
-		float y = a->radius*sin(b);
+	glBegin(GL_QUADS);
 
-		glVertex2f(x, y);
+	glTexCoord2f(0.0, 0.0);
+	glVertex2f(-32.f, -32.f);
 
-		b += db;
-	}
+	glTexCoord2f(1.0, 0.0);
+	glVertex2f(32.f, -32.f);
+
+	glTexCoord2f(1.0, 1.0);
+	glVertex2f(32.f, 32.f);
+
+	glTexCoord2f(0.0, 1.0);
+	glVertex2f(-32.f, 32.f);
 
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 
 	glPopMatrix();
 }
