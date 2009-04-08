@@ -7,7 +7,7 @@
 #include "gl_util.h"
 #include "image.h"
 
-static const float BEAM_SPEED = 10.f;
+static const float BEAM_SPEED = 25.f;
 
 static GLuint texture;
 

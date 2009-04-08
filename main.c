@@ -348,9 +348,9 @@ handle_events(void)
 		}
 
 		if (pad_state & PAD_UP)
-			ship_move_forward(enterprise);
+			ship_throttle(enterprise);
 		if (pad_state & PAD_DOWN)
-			ship_move_backwards(enterprise);
+			ship_break_and_reverse(enterprise);
 		if (pad_state & PAD_LEFT)
 			ship_rotate_countercw(enterprise);
 		if (pad_state & PAD_RIGHT)

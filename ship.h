@@ -12,6 +12,7 @@ struct ship
 
 	float angle;
 	float speed;
+	float accel;
 
 	struct list *beam_list;
 };
@@ -22,11 +23,12 @@ void ship_destroy(struct ship *s);
 void ship_init(struct ship *s, int x, int y);
 void ship_draw(const struct ship *s);
 void ship_move_forward(struct ship *s);
-void ship_move_backwards(struct ship *s);
 void ship_rotate_cw(struct ship *s);
 void ship_rotate_countercw(struct ship *s);
 void ship_update(struct ship *s);
 void ship_fire_front(struct ship *s);
+void ship_throttle(struct ship *s);
+void ship_break_and_reverse(struct ship *s);
 void ship_load_texture(void);
 
 int ship_can_fire(const struct ship *s);

@@ -12,6 +12,9 @@
 
 static const float MOVE_OFFSET = 5.0;
 static const float INI_SPEED = 7.0;
+static const float MAX_SPEED = 15.0;
+static const float SHIP_THROTTLE = 3.0;
+static const float SHIP_FRICTION = .5;
 static const int INI_BEAM_COUNT = 5;
 
 static GLuint texture;
@@ -112,6 +115,7 @@ void ship_init(struct ship *s, int x, int y)
 	s->speed = INI_SPEED;
 	s->beam_count = INI_BEAM_COUNT;
 	s->beam_list = list_new();
+	s->accel = 0;
 }
 
 void ship_draw(const struct ship *s)
@@ -162,14 +166,35 @@ void ship_move_forward(struct ship *s)
 	s->y += sin(rad)*s->speed;
 }
 
-void ship_move_backwards(struct ship *s)
+void ship_throttle(struct ship *s)
 {
-	float rad;
+	s->speed += SHIP_THROTTLE;
 
-	rad = deg_to_rad(s->angle);
+	if (s->speed > MAX_SPEED)
+		s->speed = MAX_SPEED;
+}
 
-	s->x -= cos(rad)*s->speed;
-	s->y -= sin(rad)*s->speed;
+void ship_break_and_reverse(struct ship *s)
+{
+	s->speed -= SHIP_THROTTLE;
+
+	if (s->speed < -MAX_SPEED)
+		s->speed = -MAX_SPEED;
+}
+
+void ship_deaccel(struct ship *s)
+{
+	int signal;
+
+	if (s->speed == 0)
+		return;
+
+	signal = (s->speed > 0) ? 1 : -1;
+
+	s->speed -= signal*SHIP_FRICTION;
+
+	if (fabs(s->speed) <= 0)
+		s->speed = 0;
 }
 
 void ship_rotate_cw(struct ship *s)
@@ -184,8 +209,13 @@ void ship_rotate_countercw(struct ship *s)
 
 void ship_update(struct ship *s)
 {
+	ship_move_forward(s);
+
+	ship_deaccel(s);
+
 	if (s->beam_count > 0)
 		s->beam_count--;
+
 
 	update_beams(s);
 }
