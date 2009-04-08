@@ -63,16 +63,16 @@ void asteroid_draw(struct asteroid *a)
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0, 0.0);
-	glVertex2f(-32.f, -32.f);
+	glVertex2f(-22.f, -22.f);
 
 	glTexCoord2f(1.0, 0.0);
-	glVertex2f(32.f, -32.f);
+	glVertex2f(22.f, -22.f);
 
 	glTexCoord2f(1.0, 1.0);
-	glVertex2f(32.f, 32.f);
+	glVertex2f(22.f, 22.f);
 
 	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-32.f, 32.f);
+	glVertex2f(-22.f, 22.f);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
