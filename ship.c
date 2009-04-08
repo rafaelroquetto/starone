@@ -11,9 +11,10 @@
 #include "defs.h"
 
 static const float MOVE_OFFSET = 5.0;
-static const float INI_SPEED = 5.0;
+static const float INI_SPEED = 7.0;
 static const int INI_BEAM_COUNT = 5;
 
+extern GLuint ship_texture;
 
 static void
 draw_beams(const struct ship *s)
@@ -102,7 +103,7 @@ void ship_init(struct ship *s, int x, int y)
 
 void ship_draw(const struct ship *s)
 {
-	glColor3f(0, 0, 1);
+	glColor3f(1, 1, 1);
 
 	glPushMatrix();
 	glLoadIdentity();
@@ -110,11 +111,23 @@ void ship_draw(const struct ship *s)
 	glTranslatef(s->x, s->y, 0);
 	glRotatef(s->angle, 0, 0, 1);
 
-	glBegin(GL_TRIANGLES);
-	glVertex2f(-10.f, -10.f);
-	glVertex2f(15.f, 0.f);
-	glVertex2f(-10.f, 10.f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, ship_texture);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0.0, 0.0);
+	glVertex2f(-20.f, -20.f);
+	glTexCoord2f(0.0, 1.0);
+	glVertex2f(15.f, -20.f);
+	glTexCoord2f(1.0, 1.0);
+	glVertex2f(15.f, 20.f);
+	glTexCoord2f(1.0, 0.0);
+	glVertex2f(-20.f, 20.f);
 	glEnd();
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_BLEND);
 	
 	glPopMatrix();
 

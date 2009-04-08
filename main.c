@@ -17,6 +17,8 @@
 #include "list.h"
 #include "util.h"
 #include "defs.h"
+#include "image.h"
+#include "gl_util.h"
 
 enum {
 	PAD_UP = 1,
@@ -37,6 +39,20 @@ static struct list *ship_list = NULL;
 static struct list *asteroid_list = NULL;
 
 static unsigned pad_state;
+
+GLuint ship_texture;
+
+static void
+load_textures()
+{
+	struct image *ship;
+
+	ship = image_make_from_png("res/ship.png");
+
+	ship_texture = image_to_opengl_texture(ship);
+
+	image_free(ship);
+}
 
 static void
 initialize_sdl()
@@ -278,6 +294,7 @@ initialize(int argc, char *argv[])
 	initialize_sdl();
 	initialize_opengl();
 	initialize_data();
+	load_textures();
 }
 
 static void
