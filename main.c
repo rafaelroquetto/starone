@@ -144,6 +144,7 @@ check_colisions(void)
 
 			if (beam_hit_asteroid(beam, asteroid)) {
 				asteroid_remove(asteroid);
+				beam_remove(beam);
 			}
 		}
 	}
@@ -267,7 +268,7 @@ create_asteroids(void)
 	for (i = 0; i < MAX_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
 		y = rand() % WINDOW_HEIGHT;
-		radius = rand() % 18;
+		radius = rand() % 48;
 		direction = rand() % 360;
 
 		a = asteroid_new(x, y, radius, direction);

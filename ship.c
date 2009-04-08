@@ -78,7 +78,7 @@ update_beams(struct ship *s)
 		beam = (struct beam *) current->data;
 		beam_update(beam);
 
-		if (beam_out_of_bounds(beam,
+		if (beam->remove || beam_out_of_bounds(beam,
 			WINDOW_WIDTH, WINDOW_HEIGHT)) {
 
 			spare = list_remove(s->beam_list, current);

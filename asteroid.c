@@ -8,8 +8,7 @@
 #include "gl_util.h"
 
 static const float ASTEROID_SPEED = 1.f;
-static const int NUM_STEPS = 10;
-static const float MIN_RADIUS = 6.f;
+static const float MIN_RADIUS = 16.f;
 
 static GLuint texture;
 
@@ -63,16 +62,16 @@ void asteroid_draw(struct asteroid *a)
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0, 0.0);
-	glVertex2f(-22.f, -22.f);
+	glVertex2f(-a->radius, -a->radius);
 
 	glTexCoord2f(1.0, 0.0);
-	glVertex2f(22.f, -22.f);
+	glVertex2f(a->radius, -a->radius);
 
 	glTexCoord2f(1.0, 1.0);
-	glVertex2f(22.f, 22.f);
+	glVertex2f(a->radius, a->radius);
 
 	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-22.f, 22.f);
+	glVertex2f(-a->radius, a->radius);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);

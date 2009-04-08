@@ -32,6 +32,7 @@ beam_new(float x, float y, float ang)
 	b->x = x;
 	b->y = y;
 	b->angle = ang;
+	b->remove = 0;
 
 	return b;
 }
@@ -85,6 +86,11 @@ void beam_update(struct beam *b)
 
 	b->x += cos(rad)*BEAM_SPEED;
 	b->y += sin(rad)*BEAM_SPEED;	
+}
+
+void beam_remove(struct beam *b)
+{
+	b->remove = 1;
 }
 
 int beam_out_of_bounds(struct beam *b, int w, int h)
