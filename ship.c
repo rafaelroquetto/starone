@@ -117,14 +117,19 @@ void ship_draw(const struct ship *s)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBegin(GL_QUADS);
+
 	glTexCoord2f(0.0, 0.0);
-	glVertex2f(-20.f, -20.f);
-	glTexCoord2f(0.0, 1.0);
-	glVertex2f(15.f, -20.f);
-	glTexCoord2f(1.0, 1.0);
-	glVertex2f(15.f, 20.f);
+	glVertex2f(-32.f, -32.f);
+
 	glTexCoord2f(1.0, 0.0);
-	glVertex2f(-20.f, 20.f);
+	glVertex2f(32.f, -32.f);
+
+	glTexCoord2f(1.0, 1.0);
+	glVertex2f(32.f, 32.f);
+
+	glTexCoord2f(0.0, 1.0);
+	glVertex2f(-32.f, 32.f);
+
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_BLEND);
