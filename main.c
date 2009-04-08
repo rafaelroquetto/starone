@@ -55,7 +55,7 @@ initialize_sdl(void)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  SDL_FULLSCREEN | SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  /* SDL_FULLSCREEN | */ SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
