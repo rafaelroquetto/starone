@@ -15,7 +15,7 @@ struct list
 };
 
 struct list *
-list_new();
+list_new(void);
 
 void list_add(struct list *l, void *data);
 void *list_remove(struct list *l, struct node *n);

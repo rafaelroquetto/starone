@@ -42,19 +42,20 @@ static unsigned pad_state;
 
 
 static void
-load_textures()
+load_textures(void)
 {
 	ship_load_texture();
 	asteroid_load_texture();
+	beam_load_texture();
 }
 
 static void
-initialize_sdl()
+initialize_sdl(void)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, /* SDL_FULLSCREEN |*/ SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  SDL_FULLSCREEN | SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -75,7 +76,7 @@ resize_viewport(int width, int height)
 }
 
 static void
-initialize_opengl()
+initialize_opengl(void)
 {
 	glClearColor(0, 0, 0, 0);
 
@@ -89,7 +90,7 @@ initialize_opengl()
 }
 
 static void
-check_gl_errors()
+check_gl_errors(void)
 {
 	GLenum error;
 
@@ -98,7 +99,7 @@ check_gl_errors()
 }
 
 static void
-tear_down_sdl()
+tear_down_sdl(void)
 {
 	SDL_Quit();
 }
@@ -124,7 +125,7 @@ beam_hit_asteroid(const struct beam *b,
 }
 
 static void
-check_colisions()
+check_colisions(void)
 {
 	struct asteroid *asteroid;
 	struct beam *beam;
@@ -149,7 +150,7 @@ check_colisions()
 }
 
 static void
-update_asteroids()
+update_asteroids(void)
 {
 	struct node *current;
 	struct asteroid *a;
@@ -177,7 +178,7 @@ update_asteroids()
 }
 
 static void
-update_ships()
+update_ships(void)
 {
 	struct node *current;
 	struct ship *s;
@@ -193,7 +194,7 @@ update_ships()
 }
 
 static void
-draw_ships()
+draw_ships(void)
 {
 	struct node *c;
 
@@ -209,7 +210,7 @@ draw_ships()
 }
 
 static void
-draw_asteroids()
+draw_asteroids(void)
 {
 	struct node *c;
 
@@ -225,14 +226,14 @@ draw_asteroids()
 }
 
 static void
-do_test()
+do_test(void)
 {
 	draw_ships();
 	draw_asteroids();
 }
 
 static void
-redraw()
+redraw(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 	do_test();
@@ -253,7 +254,7 @@ create_ship(int x, int y)
 }
 
 static void
-create_asteroids()
+create_asteroids(void)
 {
 	int i, x, y, direction, radius;
 	struct asteroid *a;
@@ -276,7 +277,7 @@ create_asteroids()
 }
 
 static void
-initialize_data()
+initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
 	create_asteroids();
@@ -292,7 +293,7 @@ initialize(int argc, char *argv[])
 }
 
 static void
-handle_events()
+handle_events(void)
 {
 	int running = 1;
 	unsigned prev_ticks;
@@ -375,7 +376,7 @@ handle_events()
 }
 
 static void
-tear_down()
+tear_down(void)
 {
 	tear_down_sdl();
 }

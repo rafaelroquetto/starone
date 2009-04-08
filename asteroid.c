@@ -14,7 +14,7 @@ static const float MIN_RADIUS = 6.f;
 static GLuint texture;
 
 void
-asteroid_load_texture()
+asteroid_load_texture(void)
 {
 	struct image *asteroid;
 

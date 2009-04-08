@@ -18,7 +18,7 @@ static GLuint texture;
 
 
 void
-ship_load_texture()
+ship_load_texture(void)
 {
 	struct image *asteroid;
 

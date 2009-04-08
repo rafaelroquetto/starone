@@ -19,7 +19,7 @@ void dump_list(const struct list *l)
 }
 
 struct list *
-list_new()
+list_new(void)
 {
 	struct list *l;
 
