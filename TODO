@@ -2,3 +2,5 @@
 - Find and fix memory leaks
 - Free unused objects
 - Add initial explosion circle
+- Fix Makefile
+- Replace magic numbers with decent constants on explosion.c (and elsewhere)
