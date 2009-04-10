@@ -7,18 +7,19 @@ struct particle
 	float y;
 	float accel;
 	float speed;
+	float ini_speed;
 	float angle;
 	float fade;
-	float radius;
 };
 
 struct particle *
 particle_new(float x, float y, float accel, float ini_speed,
-		float angle, float fade, float radius);
+		float angle);
 
 void particle_destroy(struct particle *p);
 void particle_update(struct particle *p);
 void particle_draw(const struct particle *p);
+void particle_load_texture(void);
 
 int particle_alive(const struct particle *p);
 

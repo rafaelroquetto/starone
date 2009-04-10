@@ -19,5 +19,8 @@ list_new(void);
 
 void list_add(struct list *l, void *data);
 void *list_remove(struct list *l, struct node *n);
+void list_free(struct list *l);
+
+int list_empty(const struct list *l);
 
 #endif /* LIST_H */

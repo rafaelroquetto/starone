@@ -1,0 +1,4 @@
+- Fix list_empty()
+- Find and fix memory leaks
+- Free unused objects
+- Add initial explosion circle

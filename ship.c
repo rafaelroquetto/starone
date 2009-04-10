@@ -9,6 +9,8 @@
 #include "ship.h"
 #include "util.h"
 #include "defs.h"
+#include "image.h"
+#include "gl_util.h"
 
 static const float MOVE_OFFSET = 5.0;
 static const float INI_SPEED = 7.0;
@@ -23,13 +25,13 @@ static GLuint texture;
 void
 ship_load_texture(void)
 {
-	struct image *asteroid;
+	struct image *ship;
 
-	asteroid = image_make_from_png("res/ship.png");
+	ship = image_make_from_png("res/ship.png");
 
-	texture = image_to_opengl_texture(asteroid);
+	texture = image_to_opengl_texture(ship);
 
-	image_free(asteroid);
+	image_free(ship);
 }
 
 static void
@@ -130,6 +132,7 @@ void ship_draw(const struct ship *s)
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture);
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 

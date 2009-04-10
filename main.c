@@ -15,6 +15,7 @@
 #include "ship.h"
 #include "beam.h"
 #include "particle.h"
+#include "explosion.h"
 #include "list.h"
 #include "util.h"
 #include "defs.h"
@@ -39,7 +40,7 @@ static struct list *ship_list = NULL;
 
 static struct list *asteroid_list = NULL;
 
-static struct particle *test_particle = NULL;
+static struct list *explosion_list = NULL;
 
 static unsigned pad_state;
 
@@ -50,6 +51,7 @@ load_textures(void)
 	ship_load_texture();
 	asteroid_load_texture();
 	beam_load_texture();
+	particle_load_texture();
 }
 
 static void
@@ -128,6 +130,21 @@ beam_hit_asteroid(const struct beam *b,
 }
 
 static void
+create_explosion(float x, float y)
+{
+	struct explosion *e;
+
+	if (explosion_list == NULL)
+		explosion_list = list_new();
+
+	
+	e = explosion_new(x, y);
+	
+	list_add(explosion_list, (void *) e);
+}
+
+
+static void
 check_colisions(void)
 {
 	struct asteroid *asteroid;
@@ -146,8 +163,10 @@ check_colisions(void)
 			asteroid = (struct asteroid *) a->data;
 
 			if (beam_hit_asteroid(beam, asteroid)) {
+				create_explosion(asteroid->x, asteroid->y);
 				asteroid_remove(asteroid);
 				beam_remove(beam);
+
 			}
 		}
 	}
@@ -180,6 +199,32 @@ update_asteroids(void)
 		current = next;
 	}
 }
+
+static void
+update_explosions(void)
+{
+	struct node *current;
+	struct explosion *e;
+
+
+	current = explosion_list->first;
+
+	while (current) {
+		struct node *next = current->next;
+
+		e = (struct explosion *) current->data;
+		explosion_update(e);
+
+		if (explosion_done(e)) {
+			list_remove(explosion_list, current);
+
+			explosion_destroy(e);
+		}
+
+		current = next;
+	}
+}
+
 
 static void
 update_ships(void)
@@ -230,11 +275,28 @@ draw_asteroids(void)
 }
 
 static void
+draw_explosions(void)
+{
+	struct node *c;
+
+	if (explosion_list == NULL)
+		return;
+
+	c = explosion_list->first;
+
+	while (c != NULL) {
+		explosion_draw((struct explosion *) c->data);
+		c = c->next;
+	}
+}
+
+
+static void
 do_test(void)
 {
 	draw_ships();
 	draw_asteroids();
-	particle_draw(test_particle);
+	draw_explosions();
 }
 
 static void
@@ -285,9 +347,9 @@ static void
 initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
-	create_asteroids();
+	explosion_list = list_new();
 
-	test_particle = particle_new(100, 100, -0.5, 15, 45, 1, 0);
+	create_asteroids();
 }
 
 static void
@@ -372,7 +434,7 @@ handle_events(void)
 		check_colisions();
 		update_ships();
 		update_asteroids();
-		particle_update(test_particle);
+		update_explosions();
 
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);
 

@@ -62,8 +62,22 @@ list_remove(struct list *l, struct node *n)
 		n->next->prev = n->prev;
 	}
 
-	free (n);
+	free(n);
 
 	return data;
 }
 
+
+void list_free(struct list *l)
+{
+	free(l);
+}
+
+int list_empty(const struct list *l)
+{
+	/* FIXME: this scheisse is not working
+	 * (l->first never null?)
+	 * causing memory leaks everywhere
+	 */
+	return (l->first == NULL) ? 1 : 0;
+}
