@@ -14,6 +14,7 @@
 #include "asteroid.h"
 #include "ship.h"
 #include "beam.h"
+#include "particle.h"
 #include "list.h"
 #include "util.h"
 #include "defs.h"
@@ -37,6 +38,8 @@ static struct ship *enterprise = NULL;
 static struct list *ship_list = NULL;
 
 static struct list *asteroid_list = NULL;
+
+static struct particle *test_particle = NULL;
 
 static unsigned pad_state;
 
@@ -231,6 +234,7 @@ do_test(void)
 {
 	draw_ships();
 	draw_asteroids();
+	particle_draw(test_particle);
 }
 
 static void
@@ -282,6 +286,8 @@ initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
 	create_asteroids();
+
+	test_particle = particle_new(100, 100, -0.5, 15, 45, 1, 0);
 }
 
 static void
@@ -366,6 +372,7 @@ handle_events(void)
 		check_colisions();
 		update_ships();
 		update_asteroids();
+		particle_update(test_particle);
 
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);
 
