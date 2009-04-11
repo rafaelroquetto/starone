@@ -360,7 +360,7 @@ handle_events(void)
 
 	while (running) {
 		SDL_Event event;
-		unsigned delay;
+		int delay;
 
 		prev_ticks = SDL_GetTicks();
 

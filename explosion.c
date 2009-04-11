@@ -6,24 +6,25 @@
 #include "list.h"
 #include "particle.h"
 
-enum { N_PARTICLES = 100 };
+enum { N_PARTICLES = 350 };
 
 static const float PARTICLE_ACCEL = -0.8;
-static const float PARTICLE_SPEED = 20;
+static const int MAX_SPEED = 10;
 
 static void
 create_particles(struct explosion *e)
 {
-	int i, angle;
+	int i, angle, speed;
 	struct particle *p;
 
 	srand(time(NULL));
 
 	for (i = 0; i < N_PARTICLES; i++) {
+		speed = (rand() % MAX_SPEED) + 1;
 		angle = rand() % 360;
 
 		p = particle_new(e->x, e->y, PARTICLE_ACCEL,
-			       	PARTICLE_SPEED, angle);
+			       	speed, angle);
 
 		list_add(e->particles, (void *) p);
 	}

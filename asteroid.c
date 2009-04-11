@@ -8,7 +8,7 @@
 #include "texture.h"
 
 static const float ASTEROID_SPEED = 1.f;
-static const float MIN_RADIUS = 16.f;
+static const float MIN_RADIUS = 20.f;
 
 static GLuint texture;
 static int obj_count = 0;

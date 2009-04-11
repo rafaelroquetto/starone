@@ -8,8 +8,9 @@
 #include "texture.h"
 
 static const float FADE_STEP = 0.03;
-static const float FADE_FACTOR = 4;
+static const float FADE_FACTOR = 1;
 static const float LIFE_FACTOR = 1e-5;
+static const float RADIUS = 8.0;
 static const int COLOR_MOD = 255;
 
 static GLuint texture;
@@ -47,7 +48,10 @@ particle_new(float x, float y, float accel, float ini_speed,
 	p->speed = ini_speed;
 	p->ini_speed = ini_speed;
 	p->angle = angle;
-	p->fade = 1.0;
+	p->alpha = 1.0;
+	p->r = 1.0;
+	p->g = 1.0;
+	p->b = 1.0;
 
 	load_texture();
 	obj_count++;
@@ -61,7 +65,15 @@ void particle_destroy(struct particle *p)
 	obj_count--;
 	delete_texture();
 
-//	free(p);
+	free(p);
+}
+
+void particle_set_color(struct particle *p, 
+		float r, float g, float b)
+{
+	p->r = r;
+	p->g = g;
+	p->b = b;
 }
 
 void particle_update(struct particle *p)
@@ -76,21 +88,21 @@ void particle_update(struct particle *p)
 	p->x += cos(rad)*p->speed;
 	p->y += sin(rad)*p->speed;
 
-	p->fade = p->speed/(p->ini_speed + p->ini_speed*FADE_FACTOR);
+	p->alpha = p->speed/(p->ini_speed + p->ini_speed*FADE_FACTOR);
 	p->speed += p->accel;
 
-	if (p->speed <= 0)
+	if (p->speed <= LIFE_FACTOR)
 		p->speed = 0;
 }
 
 int particle_alive(const struct particle *p)
 {
-	return (p->fade > LIFE_FACTOR) ? 1 : 0;
+	return (int) p->speed;
 }
 
 void particle_draw(const struct particle *p)
 {
-	glColor4f(1, 1, 1, p->fade);
+	glColor4f(p->r, p->g, p->b, p->alpha);
 
 	glPushMatrix();
 	glLoadIdentity();
@@ -107,16 +119,16 @@ void particle_draw(const struct particle *p)
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0, 0.0);
-	glVertex2f(-8.0, -8.0);
+	glVertex2f(-RADIUS, -RADIUS);
 
 	glTexCoord2f(1.0, 0.0);
-	glVertex2f(8.0, -8.0);
+	glVertex2f(RADIUS, -RADIUS);
 
 	glTexCoord2f(1.0, 1.0);
-	glVertex2f(8.0, 8.0);
+	glVertex2f(RADIUS, RADIUS);
 
 	glTexCoord2f(0.0, 1.0);
-	glVertex2f(-8.0, 8.0);
+	glVertex2f(-RADIUS, RADIUS);
 
 	glEnd();
 	glDisable(GL_TEXTURE_2D);
