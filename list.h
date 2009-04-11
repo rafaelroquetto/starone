@@ -19,7 +19,7 @@ list_new(void);
 
 void list_add(struct list *l, void *data);
 void *list_remove(struct list *l, struct node *n);
-void list_free(struct list *l);
+void list_free(struct list *l, void (*free_func(void *)));
 
 int list_empty(const struct list *l);
 

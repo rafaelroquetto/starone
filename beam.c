@@ -2,25 +2,34 @@
 #include <malloc.h>
 #include <malloc.h>
 #include <math.h>
+#include <assert.h>
+
 #include "beam.h"
 #include "util.h"
-#include "gl_util.h"
-#include "image.h"
+#include "texture.h"
+
 
 static const float BEAM_SPEED = 25.f;
 
 static GLuint texture;
+static int obj_count = 0;
 
-void
-beam_load_texture(void)
+static void
+load_texture(void)
 {
-	struct image *beam;
+	assert(obj_count >= 0);
 
-	beam = image_make_from_png("res/beam.png");
+	if (obj_count == 0)
+		texture = load_texture_from_png("res/beam.png");
+}
 
-	texture = image_to_opengl_texture(beam);
+static void
+delete_texture(void)
+{
+	assert(obj_count >= 0);
 
-	image_free(beam);
+	if (obj_count == 0)
+		glDeleteTextures(1, &texture);
 }
 
 struct beam *
@@ -34,11 +43,18 @@ beam_new(float x, float y, float ang)
 	b->angle = ang;
 	b->remove = 0;
 
+	load_texture();
+	obj_count++;
+
 	return b;
 }
 
 void beam_destroy(struct beam *b)
 {
+	obj_count--;
+
+	delete_texture();
+
 	free(b);
 }
 

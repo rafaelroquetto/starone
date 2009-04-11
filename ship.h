@@ -29,7 +29,6 @@ void ship_update(struct ship *s);
 void ship_fire_front(struct ship *s);
 void ship_throttle(struct ship *s);
 void ship_break_and_reverse(struct ship *s);
-void ship_load_texture(void);
 
 int ship_can_fire(const struct ship *s);
 

@@ -1,14 +1,21 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
-#include <string.h>
-#include <errno.h>
+#include <stdio.h>
+#include <malloc.h>
 #include <png.h>
+#include <errno.h>
+#include <GL/gl.h>
 
+#include "texture.h"
 #include "panic.h"
-#include "image.h"
 
-struct image *
+
+struct image {
+	int width;
+	int height;
+	unsigned *bits;
+};
+
+static struct image *
 image_make_from_png(const char *png_filename)
 {
 	FILE *fp;
@@ -101,9 +108,55 @@ image_make_from_png(const char *png_filename)
 	return img;
 }
 
-void
+static void
 image_free(struct image *img)
 {
 	free(img->bits);
 	free(img);
+}
+
+static GLuint
+image_to_opengl_texture(const struct image *image)
+{
+	GLuint texture_id;
+
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+	glEnable(GL_TEXTURE_2D);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glGenTextures(1, &texture_id);
+
+	if (glGetError() != GL_NO_ERROR)
+		panic("glGenTextures failed");
+
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->width, image->height,
+	  0, GL_RGBA, GL_UNSIGNED_BYTE, image->bits);
+
+	glPopAttrib();
+
+	return texture_id;
+}
+
+GLuint load_texture_from_png(const char *filename)
+{
+	struct image *image;
+	GLuint texture;
+
+	image = image_make_from_png(filename);
+
+	texture = image_to_opengl_texture(image);
+
+	image_free(image);
+
+	return texture;
 }

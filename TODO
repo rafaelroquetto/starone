@@ -1,6 +1,7 @@
-- Fix list_empty()
 - Find and fix memory leaks
-- Free unused objects
+- Figure out how to remove list warnings such as " main.c: In function ‘free_explosions’:
+main.c:447: warning: passing argument 2 of ‘list_free’ from incompatible pointer type"
+ 
 - Add initial explosion circle
 - Fix Makefile
 - Replace magic numbers with decent constants on explosion.c (and elsewhere)

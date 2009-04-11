@@ -68,16 +68,32 @@ list_remove(struct list *l, struct node *n)
 }
 
 
-void list_free(struct list *l)
+void
+list_free(struct list *l, void (*free_func(void *)))
 {
+	struct node *current;
+	struct node *next;
+	void *data;
+
+	if (free_func == NULL)
+		free_func = free;
+
+	current = l->first;
+
+	while (current) {
+		next = current->next;
+
+		data = list_remove(l, current);
+
+		free_func(data);
+
+		current = next;
+	}
+
 	free(l);
 }
 
 int list_empty(const struct list *l)
 {
-	/* FIXME: this scheisse is not working
-	 * (l->first never null?)
-	 * causing memory leaks everywhere
-	 */
 	return (l->first == NULL) ? 1 : 0;
 }

@@ -8,6 +8,9 @@
 
 enum { N_PARTICLES = 100 };
 
+static const float PARTICLE_ACCEL = -0.8;
+static const float PARTICLE_SPEED = 20;
+
 static void
 create_particles(struct explosion *e)
 {
@@ -19,8 +22,8 @@ create_particles(struct explosion *e)
 	for (i = 0; i < N_PARTICLES; i++) {
 		angle = rand() % 360;
 
-		p = particle_new(e->x, e->y, 0.05, 5,
-				angle);
+		p = particle_new(e->x, e->y, PARTICLE_ACCEL,
+			       	PARTICLE_SPEED, angle);
 
 		list_add(e->particles, (void *) p);
 	}
@@ -81,9 +84,9 @@ void explosion_draw(const struct explosion *e)
 
 void explosion_destroy(struct explosion *e)
 {
-	printf("Destroying explosion %p\n", e);
+	list_free(e->particles, particle_destroy);
+	e->particles = NULL;
 
-	list_free(e->particles);
 	free(e);
 }
 

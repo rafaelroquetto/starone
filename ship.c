@@ -5,12 +5,12 @@
 #include <GL/gl.h>
 #include <malloc.h>
 #include <math.h>
+#include <assert.h>
 
 #include "ship.h"
 #include "util.h"
 #include "defs.h"
-#include "image.h"
-#include "gl_util.h"
+#include "texture.h"
 
 static const float MOVE_OFFSET = 5.0;
 static const float INI_SPEED = 7.0;
@@ -20,18 +20,25 @@ static const float SHIP_FRICTION = .5;
 static const int INI_BEAM_COUNT = 5;
 
 static GLuint texture;
+static int obj_count = 0;
 
 
-void
-ship_load_texture(void)
+static void
+load_texture(void)
 {
-	struct image *ship;
+	assert(obj_count >= 0);
 
-	ship = image_make_from_png("res/ship.png");
+	if (obj_count == 0)
+		texture = load_texture_from_png("res/ship.png");
+}
 
-	texture = image_to_opengl_texture(ship);
+static void
+delete_texture(void)
+{
+	assert(obj_count >= 0);
 
-	image_free(ship);
+	if (obj_count == 0)
+		glDeleteTextures(1, &texture);
 }
 
 static void
@@ -101,11 +108,20 @@ ship_new(int x, int y)
 
 	ship_init(s, x, y);
 
+	load_texture();
+
+	obj_count++;
+
 	return s;
 }
 
 void ship_destroy(struct ship *s)
 {
+	obj_count--;
+	delete_texture();
+
+	list_free(s->beam_list, beam_destroy);
+
 	free(s);
 }
 

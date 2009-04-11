@@ -1,27 +1,34 @@
 #include <GL/gl.h>
 #include <math.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "asteroid.h"
 #include "util.h"
-#include "image.h"
-#include "gl_util.h"
+#include "texture.h"
 
 static const float ASTEROID_SPEED = 1.f;
 static const float MIN_RADIUS = 16.f;
 
 static GLuint texture;
+static int obj_count = 0;
 
-void
-asteroid_load_texture(void)
+static void
+load_texture(void)
 {
-	struct image *asteroid;
+	assert(obj_count >= 0);
 
-	asteroid = image_make_from_png("res/asteroid.png");
+	if (obj_count == 0)
+		texture = load_texture_from_png("res/asteroid.png");
+}
 
-	texture = image_to_opengl_texture(asteroid);
+static void
+delete_texture(void)
+{
+	assert(obj_count >= 0);
 
-	image_free(asteroid);
+	if (obj_count == 0)
+		glDeleteTextures(1, &texture);
 }
 
 struct asteroid *
@@ -37,11 +44,19 @@ asteroid_new(float x, float y, float radius, float direction)
 	a->direction = direction;
 	a->remove = 0;
 
+	load_texture();
+
+	obj_count++;
+
 	return a;
 }
 
 void asteroid_destroy(struct asteroid *a)
 {
+	obj_count--;
+
+	delete_texture();
+
 	free(a);
 }
 

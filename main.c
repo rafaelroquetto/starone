@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <SDL.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
@@ -19,8 +20,6 @@
 #include "list.h"
 #include "util.h"
 #include "defs.h"
-#include "image.h"
-#include "gl_util.h"
 
 enum {
 	PAD_UP = 1,
@@ -44,15 +43,6 @@ static struct list *explosion_list = NULL;
 
 static unsigned pad_state;
 
-
-static void
-load_textures(void)
-{
-	ship_load_texture();
-	asteroid_load_texture();
-	beam_load_texture();
-	particle_load_texture();
-}
 
 static void
 initialize_sdl(void)
@@ -358,7 +348,6 @@ initialize(int argc, char *argv[])
 	initialize_sdl();
 	initialize_opengl();
 	initialize_data();
-	load_textures();
 }
 
 static void
@@ -445,9 +434,31 @@ handle_events(void)
 	}
 }
 
+
+static void
+free_asteroids(void)
+{
+	list_free(asteroid_list, asteroid_destroy);
+}
+
+static void
+free_explosions(void)
+{
+	list_free(explosion_list, explosion_destroy);
+}
+
+static void
+free_objects(void)
+{
+	free_asteroids();
+	free_explosions();
+	ship_destroy(enterprise);
+}
+
 static void
 tear_down(void)
 {
+	free_objects();
 	tear_down_sdl();
 }
 

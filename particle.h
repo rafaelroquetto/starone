@@ -19,7 +19,6 @@ particle_new(float x, float y, float accel, float ini_speed,
 void particle_destroy(struct particle *p);
 void particle_update(struct particle *p);
 void particle_draw(const struct particle *p);
-void particle_load_texture(void);
 
 int particle_alive(const struct particle *p);
 
