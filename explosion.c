@@ -6,10 +6,16 @@
 #include "list.h"
 #include "particle.h"
 
-enum { N_PARTICLES = 350 };
+enum { 
+	N_PARTICLES = 350,
+	MAX_SPEED = 10,
+	MIN_PARTICLES = 40,
+	ROUNDS = 4
+};
 
 static const float PARTICLE_ACCEL = -0.8;
-static const int MAX_SPEED = 10;
+static const float COLOR_RED[] = { 1.0, 0.0, 0.0 };
+static const float COLOR_WHITE[] = { 1.0, 1.0, 1.0 };
 
 static void
 create_particles(struct explosion *e)
@@ -25,9 +31,13 @@ create_particles(struct explosion *e)
 
 		p = particle_new(e->x, e->y, PARTICLE_ACCEL,
 			       	speed, angle);
+		particle_set_color(p, COLOR_WHITE[0], COLOR_WHITE[1], COLOR_WHITE[2]);
+		particle_fade_to_color(p, COLOR_RED[0], COLOR_RED[1], COLOR_RED[2]);
 
 		list_add(e->particles, (void *) p);
 	}
+
+	e->rounds--;
 }
 
 struct explosion *
@@ -40,6 +50,7 @@ explosion_new(float x, float y)
 	e->x = x;
 	e->y = y;
 	e->particles = list_new();
+	e->rounds = ROUNDS;
 
 	create_particles(e);
 
@@ -67,6 +78,10 @@ void explosion_update(struct explosion *e)
 		}
 
 		current = next;
+	}
+
+	if (e->rounds > 0 && list_size(e->particles) > MIN_PARTICLES) {
+		create_particles(e);
 	}
 
 }

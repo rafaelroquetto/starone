@@ -11,7 +11,7 @@ static const float FADE_STEP = 0.03;
 static const float FADE_FACTOR = 1;
 static const float LIFE_FACTOR = 1e-5;
 static const float RADIUS = 8.0;
-static const int COLOR_MOD = 255;
+static const float COLOR_FADE_FACTOR = 0.035;
 
 static GLuint texture;
 static int obj_count = 0;
@@ -52,6 +52,7 @@ particle_new(float x, float y, float accel, float ini_speed,
 	p->r = 1.0;
 	p->g = 1.0;
 	p->b = 1.0;
+	p->color_fading = 0;
 
 	load_texture();
 	obj_count++;
@@ -76,6 +77,16 @@ void particle_set_color(struct particle *p,
 	p->b = b;
 }
 
+void particle_fade_to_color(struct particle *p,
+		float r, float g, float b)
+{
+	p->color_fading = 1;
+
+	p->rf = r;
+	p->gf = g;
+	p->bf = b;
+}
+
 void particle_update(struct particle *p)
 {
 	float rad;
@@ -90,6 +101,28 @@ void particle_update(struct particle *p)
 
 	p->alpha = p->speed/(p->ini_speed + p->ini_speed*FADE_FACTOR);
 	p->speed += p->accel;
+
+	/* FIXME: this is not working
+	 * replace COLOR_FADE_FACTOR with
+	 * dynamic factor
+	 * fade color is wrong
+	 */
+	if (p->color_fading) {
+		if (p->r < p->rf)
+			p->r += COLOR_FADE_FACTOR;
+		else
+			p->r -= COLOR_FADE_FACTOR;
+
+		if (p->g < p->gf)
+			p->g += COLOR_FADE_FACTOR;
+		else
+			p->g -= COLOR_FADE_FACTOR;
+
+		if (p->b < p->bf)
+			p->b += COLOR_FADE_FACTOR;
+		else
+			p->b -= COLOR_FADE_FACTOR;
+	}
 
 	if (p->speed <= LIFE_FACTOR)
 		p->speed = 0;

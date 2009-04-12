@@ -8,6 +8,8 @@ struct explosion
 	float x;
 	float y;
 
+	int rounds;
+
 	struct list *particles;
 };
 

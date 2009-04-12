@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 #include "list.h"
 
 
@@ -25,6 +26,7 @@ list_new(void)
 
 	l = malloc(sizeof *l);
 
+	l->size = 0;
 	l->first = NULL;
 
 	return l;
@@ -45,6 +47,7 @@ list_add(struct list *l, void *data)
 		l->first->prev = n;
 
 	l->first = n;
+	l->size++;
 
 }
 
@@ -63,6 +66,10 @@ list_remove(struct list *l, struct node *n)
 	}
 
 	free(n);
+
+	l->size--;
+
+	assert(l->size >= 0);
 
 	return data;
 }
@@ -96,4 +103,9 @@ list_free(struct list *l, void (*free_func(void *)))
 int list_empty(const struct list *l)
 {
 	return (l->first == NULL) ? 1 : 0;
+}
+
+int list_size(const struct list *l)
+{
+	return l->size;
 }

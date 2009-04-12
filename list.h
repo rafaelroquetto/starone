@@ -11,6 +11,7 @@ struct node
 
 struct list
 {
+	size_t size;
 	struct node *first;
 };
 
@@ -22,5 +23,6 @@ void *list_remove(struct list *l, struct node *n);
 void list_free(struct list *l, void (*free_func(void *)));
 
 int list_empty(const struct list *l);
+int list_size(const struct list *l);
 
 #endif /* LIST_H */
