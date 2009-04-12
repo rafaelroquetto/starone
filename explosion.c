@@ -5,6 +5,7 @@
 #include "explosion.h"
 #include "list.h"
 #include "particle.h"
+#include "color.h"
 
 enum { 
 	N_PARTICLES = 350,
@@ -14,8 +15,9 @@ enum {
 };
 
 static const float PARTICLE_ACCEL = -0.8;
-static const float COLOR_RED[] = { 1.0, 0.0, 0.0 };
-static const float COLOR_WHITE[] = { 1.0, 1.0, 1.0 };
+
+static struct color COLOR_RED = { 1.0, 0.0, 0.0, 1.0 };
+static struct color COLOR_WHITE = { 1.0, 1.0, 1.0, 1.0 };
 
 static void
 create_particles(struct explosion *e)
@@ -31,8 +33,8 @@ create_particles(struct explosion *e)
 
 		p = particle_new(e->x, e->y, PARTICLE_ACCEL,
 			       	speed, angle);
-		particle_set_color(p, COLOR_WHITE[0], COLOR_WHITE[1], COLOR_WHITE[2]);
-		particle_fade_to_color(p, COLOR_RED[0], COLOR_RED[1], COLOR_RED[2]);
+		particle_set_color(p, &COLOR_WHITE);
+		particle_fade_to_color(p, &COLOR_RED);
 
 		list_add(e->particles, (void *) p);
 	}

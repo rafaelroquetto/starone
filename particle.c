@@ -48,10 +48,10 @@ particle_new(float x, float y, float accel, float ini_speed,
 	p->speed = ini_speed;
 	p->ini_speed = ini_speed;
 	p->angle = angle;
-	p->alpha = 1.0;
-	p->r = 1.0;
-	p->g = 1.0;
-	p->b = 1.0;
+	p->src_color.alpha = 1.0;
+	p->src_color.red = 1.0;
+	p->src_color.green = 1.0;
+	p->src_color.blue = 1.0;
 	p->color_fading = 0;
 
 	load_texture();
@@ -69,22 +69,24 @@ void particle_destroy(struct particle *p)
 	free(p);
 }
 
-void particle_set_color(struct particle *p, 
-		float r, float g, float b)
+void particle_set_color(struct particle *p, const struct color *c) 
 {
-	p->r = r;
-	p->g = g;
-	p->b = b;
+	assert((p != NULL) && (c != NULL));
+
+	p->src_color.red = c->red;
+	p->src_color.green = c->green;
+	p->src_color.blue = c->blue;
 }
 
-void particle_fade_to_color(struct particle *p,
-		float r, float g, float b)
+void particle_fade_to_color(struct particle *p, const struct color *c)
 {
+	assert((p != NULL) && (c != NULL));
+
 	p->color_fading = 1;
 
-	p->rf = r;
-	p->gf = g;
-	p->bf = b;
+	p->dest_color.red= c->red;
+	p->dest_color.green = c->green;
+	p->dest_color.blue = c->blue;
 }
 
 void particle_update(struct particle *p)
@@ -99,7 +101,7 @@ void particle_update(struct particle *p)
 	p->x += cos(rad)*p->speed;
 	p->y += sin(rad)*p->speed;
 
-	p->alpha = p->speed/(p->ini_speed + p->ini_speed*FADE_FACTOR);
+	p->src_color.alpha = p->speed/(p->ini_speed + p->ini_speed*FADE_FACTOR);
 	p->speed += p->accel;
 
 	/* FIXME: this is not working
@@ -108,20 +110,20 @@ void particle_update(struct particle *p)
 	 * fade color is wrong
 	 */
 	if (p->color_fading) {
-		if (p->r < p->rf)
-			p->r += COLOR_FADE_FACTOR;
+		if (p->src_color.red < p->dest_color.red)
+			p->src_color.red += COLOR_FADE_FACTOR;
 		else
-			p->r -= COLOR_FADE_FACTOR;
+			p->src_color.red -= COLOR_FADE_FACTOR;
 
-		if (p->g < p->gf)
-			p->g += COLOR_FADE_FACTOR;
+		if (p->src_color.green < p->dest_color.green)
+			p->src_color.green += COLOR_FADE_FACTOR;
 		else
-			p->g -= COLOR_FADE_FACTOR;
+			p->src_color.green -= COLOR_FADE_FACTOR;
 
-		if (p->b < p->bf)
-			p->b += COLOR_FADE_FACTOR;
+		if (p->src_color.blue < p->dest_color.blue)
+			p->src_color.blue += COLOR_FADE_FACTOR;
 		else
-			p->b -= COLOR_FADE_FACTOR;
+			p->src_color.blue -= COLOR_FADE_FACTOR;
 	}
 
 	if (p->speed <= LIFE_FACTOR)
@@ -135,7 +137,10 @@ int particle_alive(const struct particle *p)
 
 void particle_draw(const struct particle *p)
 {
-	glColor4f(p->r, p->g, p->b, p->alpha);
+	glColor4f(p->src_color.red,
+		   p->src_color.green,
+		   p->src_color.blue,
+		   p->src_color.alpha);
 
 	glPushMatrix();
 	glLoadIdentity();

@@ -1,6 +1,8 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
+#include "color.h"
+
 struct particle
 {
 	float x;
@@ -9,12 +11,9 @@ struct particle
 	float speed;
 	float ini_speed;
 	float angle;
-	float r;
-	float g;
-	float b;
-	float rf;
-	float gf;
-	float bf;
+	
+	struct color src_color;
+	struct color dest_color;
 	float alpha;
 
 	int color_fading;
@@ -27,10 +26,10 @@ particle_new(float x, float y, float accel, float ini_speed,
 void particle_destroy(struct particle *p);
 void particle_update(struct particle *p);
 void particle_draw(const struct particle *p);
-void particle_set_color(struct particle *p,
-		float r, float g, float b);
-void particle_fade_to_color(struct particle *p,
-		float r, float g, float b);
+void particle_set_color(struct particle *p, 
+		const struct color *c);
+void particle_fade_to_color(struct particle *p, 
+		const struct color *c);
 
 int particle_alive(const struct particle *p);
 

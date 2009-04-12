@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -g
-OBJS = asteroid.o ship.o main.o panic.o particle.o util.o beam.o list.o explosion.o texture.o
+OBJS = asteroid.o ship.o main.o panic.o particle.o util.o beam.o list.o explosion.o texture.o color.o
 OUTPUT = starone
 
 LIBS += -lm -ldl `sdl-config --libs` -lGL -lGLU -lpng
@@ -26,3 +26,4 @@ list.o: list.c
 particle.o: particle.c
 explosion.o: explosion.c
 texture.o: texture.c
+color.o: color.c
