@@ -27,6 +27,7 @@ enum {
 	PAD_LEFT = 4,
 	PAD_RIGHT = 8,
 	PAD_FIRE = 16,
+	PAD_PULSE = 32
 };
 
 enum { MAX_ASTEROIDS = 100};
@@ -215,7 +216,6 @@ update_explosions(void)
 	}
 }
 
-
 static void
 update_ships(void)
 {
@@ -279,7 +279,6 @@ draw_explosions(void)
 		c = c->next;
 	}
 }
-
 
 static void
 do_test(void)
@@ -381,6 +380,8 @@ handle_events(void)
 						pad_state |= PAD_RIGHT;
 					} else if (event.key.keysym.sym == SDLK_SPACE) {
 							pad_state |= PAD_FIRE;
+					} else if (event.key.keysym.sym == SDLK_m) {
+							pad_state |= PAD_PULSE;
 					} else if (event.key.keysym.sym == SDLK_ESCAPE) {
 						running = 0;
 					}
@@ -397,6 +398,8 @@ handle_events(void)
 						pad_state &= ~PAD_RIGHT;
 					} else if (event.key.keysym.sym == SDLK_SPACE) {
 						pad_state &= ~PAD_FIRE;
+					} else if (event.key.keysym.sym == SDLK_m) {
+						pad_state &= ~PAD_PULSE;
 					}
 					break;
 
@@ -416,6 +419,11 @@ handle_events(void)
 		if (pad_state & PAD_FIRE) {
 			if (ship_can_fire(enterprise)) {
 				ship_fire_front(enterprise);
+			}
+		}
+		if (pad_state & PAD_PULSE) {
+			if (ship_can_pulse(enterprise)) {
+				ship_pulse(enterprise);
 			}
 		}
 

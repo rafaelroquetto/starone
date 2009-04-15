@@ -11,6 +11,7 @@
 #include "util.h"
 #include "defs.h"
 #include "texture.h"
+#include "pulse.h"
 
 static const float MOVE_OFFSET = 5.0;
 static const float INI_SPEED = 7.0;
@@ -54,6 +55,19 @@ draw_beams(const struct ship *s)
 	}
 }
 
+static void 
+draw_pulses(struct ship *s)
+{
+	struct node *current;
+
+	current = s->pulse_list->first;
+
+	while (current) {
+		pulse_draw((struct pulse *) current->data);
+		current = current->next;
+	}
+}
+
 static void
 create_beam(struct ship *s)
 {
@@ -67,6 +81,16 @@ create_beam(struct ship *s)
 
 	list_add(s->beam_list, (void *) b);
 
+}
+
+static void
+create_pulse(struct ship *s)
+{
+	struct pulse *p;
+
+	p = pulse_new(s->x, s->y);
+
+	list_add(s->pulse_list, (void *) p);
 }
 
 static void
@@ -99,6 +123,30 @@ update_beams(struct ship *s)
 	}
 }
 
+static void
+update_pulses(struct ship *s)
+{
+	struct node *current;
+	struct pulse *p;
+
+	current = s->pulse_list->first;
+
+	while (current) {
+		struct node *next = current->next;
+
+		p = (struct pulse *) current->data;
+		pulse_update(p);
+
+		if (pulse_done(p)) {
+			list_remove(s->pulse_list, current);
+
+			pulse_destroy(p);
+		}
+
+		current = next;
+	}
+}
+
 struct ship *
 ship_new(int x, int y)
 {
@@ -121,6 +169,7 @@ void ship_destroy(struct ship *s)
 	delete_texture();
 
 	list_free(s->beam_list, beam_destroy);
+	list_free(s->pulse_list, pulse_destroy);
 
 	free(s);
 }
@@ -133,6 +182,8 @@ void ship_init(struct ship *s, int x, int y)
 	s->speed = INI_SPEED;
 	s->beam_count = INI_BEAM_COUNT;
 	s->beam_list = list_new();
+	s->pulse_list = list_new();
+	s->can_pulse = 1;
 	s->accel = 0;
 }
 
@@ -173,6 +224,7 @@ void ship_draw(const struct ship *s)
 	glPopMatrix();
 
 	draw_beams(s);
+	draw_pulses(s);
 }
 
 void ship_move_forward(struct ship *s)
@@ -237,6 +289,7 @@ void ship_update(struct ship *s)
 
 
 	update_beams(s);
+	update_pulses(s);
 }
 
 void ship_fire_front(struct ship *s)
@@ -244,6 +297,13 @@ void ship_fire_front(struct ship *s)
 	create_beam(s);
 
 	s->beam_count = INI_BEAM_COUNT;
+}
+
+void ship_pulse(struct ship *s)
+{
+	create_pulse(s);
+
+	s->can_pulse = 0;
 }
 
 int ship_can_fire(const struct ship *s)
@@ -255,4 +315,9 @@ struct list *
 ship_get_beam_list(const struct ship *s)
 {
 	return s->beam_list;
+}
+
+int ship_can_pulse(const struct ship *s)
+{
+	return (s->can_pulse == 1);
 }

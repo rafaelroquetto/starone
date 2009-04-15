@@ -9,12 +9,14 @@ struct ship
 	int x;
 	int y;
 	int beam_count;
+	int can_pulse;
 
 	float angle;
 	float speed;
 	float accel;
 
 	struct list *beam_list;
+	struct list *pulse_list;
 };
 
 struct ship *ship_new(int x, int y);
@@ -29,8 +31,10 @@ void ship_update(struct ship *s);
 void ship_fire_front(struct ship *s);
 void ship_throttle(struct ship *s);
 void ship_break_and_reverse(struct ship *s);
+void ship_pulse(struct ship *s);
 
 int ship_can_fire(const struct ship *s);
+int ship_can_pulse(const struct ship *s);
 
 struct list *
 ship_get_beam_list(const struct ship *s);
