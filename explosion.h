@@ -2,6 +2,7 @@
 #define EXPLOSION_H
 
 struct list;
+struct pulse;
 
 struct explosion
 {
@@ -11,6 +12,8 @@ struct explosion
 	int rounds;
 
 	struct list *particles;
+
+	struct pulse *pulse;
 };
 
 struct explosion *

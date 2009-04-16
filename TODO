@@ -11,3 +11,4 @@ main.c:447: warning: passing argument 2 of ‘list_free’ from incompatible poi
 - Add white circle to pulse
 - Check pulse collisions
 - More fancy asteroids
+- http://www.songho.ca/opengl/gl_vertexarray.html (vertexbuffer)

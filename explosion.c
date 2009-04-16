@@ -6,10 +6,11 @@
 #include "list.h"
 #include "particle.h"
 #include "color.h"
+#include "pulse.h"
 
 enum { 
 	N_PARTICLES = 350,
-	MAX_SPEED = 10,
+	MAX_SPEED = 20,
 	MIN_PARTICLES = 40,
 	ROUNDS = 4
 };
@@ -53,6 +54,7 @@ explosion_new(float x, float y)
 	e->y = y;
 	e->particles = list_new();
 	e->rounds = ROUNDS;
+	e->pulse = pulse_new(x, y);
 
 	create_particles(e);
 
@@ -86,6 +88,14 @@ void explosion_update(struct explosion *e)
 		create_particles(e);
 	}
 
+	if (e->pulse) {
+		pulse_update(e->pulse);
+	}
+
+	if (e->pulse && pulse_done(e->pulse)) {
+		pulse_destroy(e->pulse);
+		e->pulse = NULL;
+	}
 }
 
 void explosion_draw(const struct explosion *e)
@@ -98,11 +108,18 @@ void explosion_draw(const struct explosion *e)
 		particle_draw((struct particle *) current->data);
 		current = current->next;
 	}
+
+	if (e->pulse) {
+		pulse_draw(e->pulse);
+	}
 }
 
 void explosion_destroy(struct explosion *e)
 {
 	list_free(e->particles, particle_destroy);
+
+	if (e->pulse)
+		pulse_destroy(e->pulse);
 	e->particles = NULL;
 
 	free(e);

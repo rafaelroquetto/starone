@@ -9,8 +9,11 @@
 
 static const float ASTEROID_SPEED = 1.f;
 static const float MIN_RADIUS = 20.f;
+static const float SMALL_RADIUS = 64.0;
+static const float LARGE_RADIUS = 64.0;
 
-static GLuint texture;
+static GLuint small_texture;
+static GLuint large_texture;
 static int obj_count = 0;
 
 static void
@@ -18,8 +21,10 @@ load_texture(void)
 {
 	assert(obj_count >= 0);
 
-	if (obj_count == 0)
-		texture = load_texture_from_png("res/asteroid.png");
+	if (obj_count == 0) {
+		small_texture = load_texture_from_png("res/asteroid3.png");
+		large_texture = load_texture_from_png("res/asteroid2.png");
+	}
 }
 
 static void
@@ -27,12 +32,14 @@ delete_texture(void)
 {
 	assert(obj_count >= 0);
 
-	if (obj_count == 0)
-		glDeleteTextures(1, &texture);
+	if (obj_count == 0) {
+		glDeleteTextures(1, &small_texture);
+		glDeleteTextures(1, &large_texture);
+	}
 }
 
 struct asteroid *
-asteroid_new(float x, float y, float radius, float direction)
+asteroid_new(float x, float y, float direction, int type)
 {
 	struct asteroid *a;
 
@@ -40,11 +47,18 @@ asteroid_new(float x, float y, float radius, float direction)
 
 	a->x = x;
 	a->y = y;
-	a->radius = (radius > MIN_RADIUS) ? radius : MIN_RADIUS;
 	a->direction = direction;
 	a->remove = 0;
 
 	load_texture();
+
+	if (type == ASTEROID_SMALL) {
+		a->radius = SMALL_RADIUS;
+		a->texture = &small_texture;
+	} else if (type == ASTEROID_LARGE) {
+		a->radius = LARGE_RADIUS;
+		a->texture = &large_texture;
+	}
 
 	obj_count++;
 
@@ -62,6 +76,7 @@ void asteroid_destroy(struct asteroid *a)
 
 void asteroid_draw(struct asteroid *a)
 {
+	GLuint texture = *(a->texture);
 	glColor3f(1, 1, 1);
 
 	glPushMatrix();

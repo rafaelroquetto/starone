@@ -1,6 +1,12 @@
 #ifndef ASTEROID_H
 #define ASTEROID_H
 
+enum asteroid_type
+{
+	ASTEROID_SMALL,
+	ASTEROID_LARGE
+};
+
 struct asteroid
 {
 	float x;
@@ -10,10 +16,13 @@ struct asteroid
 	float radius;
 
 	int remove;
+	int type;
+
+	GLuint *texture;
 };
 
 struct asteroid *
-asteroid_new(float x, float y, float radius, float direction);
+asteroid_new(float x, float y, float direction, int type);
 
 void asteroid_destroy(struct asteroid *a);
 void asteroid_draw(struct asteroid *a);

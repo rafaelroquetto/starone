@@ -51,7 +51,7 @@ initialize_sdl(void)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  /* SDL_FULLSCREEN | */ SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  /* SDL_FULLSCREEN | */SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -312,7 +312,7 @@ create_ship(int x, int y)
 static void
 create_asteroids(void)
 {
-	int i, x, y, direction, radius;
+	int i, x, y, direction, type;
 	struct asteroid *a;
 
 	if (asteroid_list == NULL)
@@ -323,10 +323,10 @@ create_asteroids(void)
 	for (i = 0; i < MAX_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
 		y = rand() % WINDOW_HEIGHT;
-		radius = rand() % 48;
+		type = rand() % 2;
 		direction = rand() % 360;
 
-		a = asteroid_new(x, y, radius, direction);
+		a = asteroid_new(x, y, direction, type);
 
 		list_add(asteroid_list, (void *) a);
 	}
