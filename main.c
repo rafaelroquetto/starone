@@ -24,7 +24,7 @@
 enum Borders {
 	TOP,
 	RIGHT,
-	BOTTON,
+	BOTTOM,
 	LEFT
 };
 
@@ -37,8 +37,9 @@ enum {
 	PAD_PULSE = 32
 };
 
-enum { 	MAX_ASTEROIDS = 100,
-	MIN_ASTEROIDS = 60,
+enum { 	
+	MAX_ASTEROIDS = 10,
+	MIN_ASTEROIDS = 2,
 };
 
 static const char *WINDOW_CAPTION = "Shitty game";
@@ -52,6 +53,8 @@ static struct list *ship_list = NULL;
 static struct list *asteroid_list = NULL;
 
 static struct list *explosion_list = NULL;
+
+static unsigned asteroid_obound_count = 0;
 
 static unsigned pad_state;
 
@@ -136,8 +139,7 @@ create_explosion(float x, float y)
 {
 	struct explosion *e;
 
-	if (explosion_list == NULL)
-		explosion_list = list_new();
+	if (explosion_list == NULL) explosion_list = list_new();
 
 	
 	e = explosion_new(x, y);
@@ -175,20 +177,19 @@ check_colisions(void)
 }
 
 static void 
-replace_asteroids(void)
+respawn_asteroids(void)
 {
-	int i, aux, type, create;
+	int i, aux, type, create, n_asteroids;
 	float x, y, direction;
 	struct asteroid *a;
 
-	direction = rand() % 360;
 	type = rand() % 2;
+	n_asteroids = list_size(asteroid_list);
 	
-	if (asteroid_number() == MAX_ASTEROIDS)
-		create = asteroid_replace();
+	if (n_asteroids == MAX_ASTEROIDS)
+		return;
 
-	else
-		create = (rand() % (MAX_ASTEROIDS - asteroid_number())) + asteroid_replace(); 
+	create = (rand() % (MAX_ASTEROIDS - n_asteroids)) + asteroid_obound_count; 
 
 	for (i = create; i > 0; i--) {
 		aux = rand() % 4;
@@ -196,23 +197,28 @@ replace_asteroids(void)
 		if (aux == TOP) {
 			x = rand() % WINDOW_WIDTH;
 			y = WINDOW_HEIGHT;
+			direction = 181.0 + (rand() % 180);
 		} else if (aux == RIGHT) {
 			x = WINDOW_WIDTH;
 			y = rand() % WINDOW_HEIGHT;
-		} else if (aux == BOTTON) {
+			direction = 90.0 + (rand() % 180);
+		} else if (aux == BOTTOM) {
 			x = rand() % WINDOW_WIDTH;
 			y = 0;
+			direction = (rand() % 180);
 		} else if (aux == LEFT) {
 			x = 0;
 			y = rand() % WINDOW_HEIGHT;
+			direction = (270 + (rand() % 180)) % 360;
 		} else {
 			abort();
 		}		
 		
 		a = asteroid_new(x, y, direction, type);
 		list_add(asteroid_list, (void *) a);
-		asteroid_ini();
+		asteroid_obound_count--;
 	}
+
 }
 
 static void
@@ -239,12 +245,14 @@ update_asteroids(void)
 
 			asteroid_destroy(spare);
 
+			asteroid_obound_count++;
+
 		}
 
 		current = next;
 	}
 
-	replace_asteroids();
+	respawn_asteroids();
 }
 
 
@@ -396,7 +404,6 @@ static void
 initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
-	enterprise = create_ship(704, 718);
 	explosion_list = list_new();
 
 	create_asteroids();

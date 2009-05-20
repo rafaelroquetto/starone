@@ -15,7 +15,6 @@ static const float LARGE_RADIUS = 64.0;
 static GLuint small_texture;
 static GLuint large_texture;
 static int obj_count = 0;
-static int obj_replace = 0;
 
 static void
 load_texture(void)
@@ -128,8 +127,6 @@ int asteroid_out_of_bounds(struct asteroid *a, int w, int h)
 
 	if ((a->x < 0) || (a->y < 0) 
 		|| (a->x > w) || (a->y > h)) {
-		obj_replace++;
-	
 		obounds = 1;
 	} else {
 		obounds = 0;
@@ -142,20 +139,5 @@ int asteroid_out_of_bounds(struct asteroid *a, int w, int h)
 void asteroid_remove(struct asteroid *a)
 {
 	a->remove = 1;
-}
-
-int asteroid_number(void) 
-{
-	return obj_count;
-}
-
-int asteroid_replace(void) 
-{
-	return obj_replace;
-}
-
-void asteroid_ini(void)
-{ /* para zerar o numero de asteroides que devem ser criados */
-	obj_replace--;
 }
 
