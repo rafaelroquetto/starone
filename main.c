@@ -21,6 +21,13 @@
 #include "util.h"
 #include "defs.h"
 
+enum Borders {
+	TOP,
+	RIGHT,
+	BOTTON,
+	LEFT
+};
+
 enum {
 	PAD_UP = 1,
 	PAD_DOWN = 2,
@@ -30,11 +37,15 @@ enum {
 	PAD_PULSE = 32
 };
 
-enum { MAX_ASTEROIDS = 100};
+enum { 	MAX_ASTEROIDS = 100,
+	MIN_ASTEROIDS = 60,
+};
 
 static const char *WINDOW_CAPTION = "Shitty game";
 
 static struct ship *enterprise = NULL;
+
+static struct ship *enterprise2 = NULL;
 
 static struct list *ship_list = NULL;
 
@@ -51,7 +62,7 @@ initialize_sdl(void)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0,  /* SDL_FULLSCREEN | */SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, /* SDL_FULLSCREEN | */SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -163,9 +174,51 @@ check_colisions(void)
 	}
 }
 
+static void 
+replace_asteroids(void)
+{
+	int i, aux, type, create;
+	float x, y, direction;
+	struct asteroid *a;
+
+	direction = rand() % 360;
+	type = rand() % 2;
+	
+	if (asteroid_number() == MAX_ASTEROIDS)
+		create = asteroid_replace();
+
+	else
+		create = (rand() % (MAX_ASTEROIDS - asteroid_number())) + asteroid_replace(); 
+
+	for (i = create; i > 0; i--) {
+		aux = rand() % 4;
+
+		if (aux == TOP) {
+			x = rand() % WINDOW_WIDTH;
+			y = WINDOW_HEIGHT;
+		} else if (aux == RIGHT) {
+			x = WINDOW_WIDTH;
+			y = rand() % WINDOW_HEIGHT;
+		} else if (aux == BOTTON) {
+			x = rand() % WINDOW_WIDTH;
+			y = 0;
+		} else if (aux == LEFT) {
+			x = 0;
+			y = rand() % WINDOW_HEIGHT;
+		} else {
+			abort();
+		}		
+		
+		a = asteroid_new(x, y, direction, type);
+		list_add(asteroid_list, (void *) a);
+		asteroid_ini();
+	}
+}
+
 static void
 update_asteroids(void)
 {
+
 	struct node *current;
 	struct asteroid *a;
 	struct asteroid *spare;
@@ -185,11 +238,17 @@ update_asteroids(void)
 			spare = list_remove(asteroid_list, current);
 
 			asteroid_destroy(spare);
+
 		}
 
 		current = next;
 	}
+
+	replace_asteroids();
 }
+
+
+
 
 static void
 update_explosions(void)
@@ -320,7 +379,7 @@ create_asteroids(void)
 
 	srand(time(NULL));
 
-	for (i = 0; i < MAX_ASTEROIDS; i++) {
+	for (i = 0; i < MIN_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
 		y = rand() % WINDOW_HEIGHT;
 		type = rand() % 2;
@@ -332,10 +391,12 @@ create_asteroids(void)
 	}
 }
 
+
 static void
 initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
+	enterprise = create_ship(704, 718);
 	explosion_list = list_new();
 
 	create_asteroids();

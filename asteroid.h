@@ -29,6 +29,11 @@ void asteroid_draw(struct asteroid *a);
 void asteroid_update(struct asteroid *a);
 void asteroid_remove(struct asteroid *a);
 
+
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h);
+
+int asteroid_number(void);
+int asteroid_replace(void);
+void asteroid_ini(void);
 
 #endif /* ASTEROID_H */
