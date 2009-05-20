@@ -385,7 +385,6 @@ create_asteroids(void)
 	if (asteroid_list == NULL)
 		asteroid_list = list_new();
 
-	srand(time(NULL));
 
 	for (i = 0; i < MIN_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
@@ -412,6 +411,7 @@ initialize_data(void)
 static void
 initialize(int argc, char *argv[])
 {
+	srand(time(NULL));
 	initialize_sdl();
 	initialize_opengl();
 	initialize_data();
