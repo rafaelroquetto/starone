@@ -13,9 +13,9 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 SHELL = /bin/sh
-top_srcdir = ..
-srcdir = .
-
+top_srcdir = @top_srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 .SUFFIXES:
 .SUFFIXES: .c .o
@@ -26,13 +26,13 @@ AR = ar
 AR_FLAGS = rc
 RANLIB = @RANLIB@
 
-CC = gcc
-CFLAGS = -I. -g -O2 `sdl-config --cflags`
-LDFLAGS =  `sdl-config --libs`
-LIBS = -lSDL -lpng -lm -ldl -lGLU -lGL 
+CC = @CC@
+CFLAGS = -I. @CFLAGS@ `sdl-config --cflags`
+LDFLAGS = @LDFLAGS@ `sdl-config --libs`
+LIBS = @LIBS@
 INSTALL = install
-prefix = /tmp
-exec_prefix = ${prefix}
+prefix = @prefix@
+exec_prefix = @exec_prefix@
 basedir = $(prefix)/starone
 bindir = $(basedir)/bin
 
