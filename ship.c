@@ -179,7 +179,7 @@ void ship_init(struct ship *s, int x, int y)
 	s->x = x;
 	s->y = y;
 	s->angle = rand() % 180;
-	s->speed = rand() % 15;
+	s->speed = rand() % (int) MAX_SPEED;
 	s->beam_count = INI_BEAM_COUNT;
 	s->beam_list = list_new();
 	s->pulse_list = list_new();

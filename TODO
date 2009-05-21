@@ -1,15 +1,28 @@
-- Find and fix memory leaks
+MILESTONE 1:
+- Tweak respawn_asteroid() <- seems like spawns are occuring more frequently at the top left corner
+- Do not allow asteroids to overlap
+- Reimplement scheisse asteroid_collide() function (current one is just a placeholder)
+- Move general collision code to a separate file, i.e., outside of main.c
+- Add another spaceship
 - Figure out how to remove list warnings such as " main.c: In function ‘free_explosions’:
 main.c:447: warning: passing argument 2 of ‘list_free’ from incompatible pointer type"
+- Documentation
+
+MILESTONE 2:
 - Fix particle_fade_to_color() -> add dynamic color fade factor calculation 
 - Add initial explosion circle, make explosion more attractive
 - Fix Makefile
 - Use VertexBuffer for explosion
+- Dynamic background
+- http://www.songho.ca/opengl/gl_vertexarray.html (vertexbuffer)
+
+LATER TASKS:
+- Find and fix memory leaks
 - Use vectors instead of angles
 - Finish pulse implementation
 - Add white circle to explosion
 - Add white circle to pulse
 - Check pulse collisions
 - More fancy asteroids
-- http://www.songho.ca/opengl/gl_vertexarray.html (vertexbuffer)
-- Fix srand(), and ship ini position
+- Menus
+- Sound effects

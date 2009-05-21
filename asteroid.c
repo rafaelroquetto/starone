@@ -123,17 +123,12 @@ void asteroid_update(struct asteroid *a)
 
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h)
 {
-	int obounds;
+	float diameter;
 
-	if ((a->x < 0) || (a->y < 0) 
-		|| (a->x > w) || (a->y > h)) {
-		obounds = 1;
-	} else {
-		obounds = 0;
-	}
-	
-	
-	return obounds;
+	diameter = 2*a->radius;
+
+	return ((a->x < -diameter) || (a->y < -diameter) 
+		|| (a->x > w + diameter) || (a->y > h + diameter));
 }
 
 void asteroid_remove(struct asteroid *a)
@@ -141,3 +136,14 @@ void asteroid_remove(struct asteroid *a)
 	a->remove = 1;
 }
 
+void asteroid_set_direction(struct asteroid *a, float direction)
+{
+	a->direction = direction;
+}
+
+void asteroid_collide(struct asteroid *a, struct asteroid *b)
+{
+	/* TODO:  fix me, because I suck! */
+	a->direction = (int) (a->direction + 180) % 360;
+	b->direction = (int) (a->direction + 180) % 360;
+}

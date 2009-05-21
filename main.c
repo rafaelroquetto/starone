@@ -38,8 +38,8 @@ enum {
 };
 
 enum { 	
-	MAX_ASTEROIDS = 10,
-	MIN_ASTEROIDS = 2,
+	MAX_ASTEROIDS = 30,
+	MIN_ASTEROIDS = 10,
 };
 
 static const char *WINDOW_CAPTION = "Shitty game";
@@ -128,10 +128,24 @@ beam_hit_asteroid(const struct beam *b,
 	r_square = a->radius;
 	r_square *= r_square;
 
-	if (d_square < r_square)
-		return 1;
-	else
-		return 0;
+	return (d_square < r_square);
+}
+
+static int
+asteroid_hit_asteroid(const struct asteroid *a,
+		const struct asteroid *b)
+{
+	float d_square;
+	float r_square;
+	float dx = (b->x - a->x);
+	float dy = (b->y - a->y);
+
+	d_square = dx*dx + dy*dy;
+
+	r_square = a->radius;
+	r_square *= r_square;
+
+	return (d_square < r_square);
 }
 
 static void
@@ -147,9 +161,8 @@ create_explosion(float x, float y)
 	list_add(explosion_list, (void *) e);
 }
 
-
 static void
-check_colisions(void)
+check_beam_collisions(void)
 {
 	struct asteroid *asteroid;
 	struct beam *beam;
@@ -176,12 +189,46 @@ check_colisions(void)
 	}
 }
 
+static void
+check_asteroid_collisions(void)
+{
+	struct node *a;
+	struct node *b;
+	struct asteroid *current;
+	struct asteroid *iterator;
+
+	for (a = asteroid_list->first; a; a = a->next) {
+		current = (struct asteroid *) a->data;
+
+		for (b = asteroid_list->first; b; b = b->next) {
+			iterator = (struct asteroid *) b->data;
+
+			if (iterator == current)
+				continue;
+
+			if (asteroid_hit_asteroid(current, iterator)) {
+				asteroid_collide(current, iterator);
+			}
+		}
+	}
+}
+
+static void
+check_collisions(void)
+{
+	check_beam_collisions();
+	check_asteroid_collisions();
+}
+
+
 static void 
 respawn_asteroids(void)
 {
 	int i, aux, type, create, n_asteroids;
 	float x, y, direction;
 	struct asteroid *a;
+
+	srand(time(NULL));
 
 	type = rand() % 2;
 	n_asteroids = list_size(asteroid_list);
@@ -193,28 +240,30 @@ respawn_asteroids(void)
 
 	for (i = create; i > 0; i--) {
 		aux = rand() % 4;
+		a = asteroid_new(x, y, 0, type);
 
 		if (aux == TOP) {
 			x = rand() % WINDOW_WIDTH;
-			y = WINDOW_HEIGHT;
-			direction = 181.0 + (rand() % 180);
+			y = 0 - 2*a->radius;
+			direction = (rand() % 180);
 		} else if (aux == RIGHT) {
-			x = WINDOW_WIDTH;
+			x = WINDOW_WIDTH + 2*a->radius;
 			y = rand() % WINDOW_HEIGHT;
 			direction = 90.0 + (rand() % 180);
 		} else if (aux == BOTTOM) {
 			x = rand() % WINDOW_WIDTH;
-			y = 0;
-			direction = (rand() % 180);
+			y = WINDOW_HEIGHT + 2*a->radius;
+			direction = 181.0 + (rand() % 180);
 		} else if (aux == LEFT) {
-			x = 0;
+			x = 0 - 2*a->radius;
 			y = rand() % WINDOW_HEIGHT;
 			direction = (270 + (rand() % 180)) % 360;
 		} else {
 			abort();
 		}		
+	
+		asteroid_set_direction(a, direction);
 		
-		a = asteroid_new(x, y, direction, type);
 		list_add(asteroid_list, (void *) a);
 		asteroid_obound_count--;
 	}
@@ -382,6 +431,8 @@ create_asteroids(void)
 	int i, x, y, direction, type;
 	struct asteroid *a;
 
+	srand(time(NULL));
+
 	if (asteroid_list == NULL)
 		asteroid_list = list_new();
 
@@ -496,7 +547,7 @@ handle_events(void)
 		}
 
 		redraw();
-		check_colisions();
+		check_collisions();
 		update_ships();
 		update_asteroids();
 		update_explosions();
