@@ -147,3 +147,13 @@ void asteroid_collide(struct asteroid *a, struct asteroid *b)
 	a->direction = (int) (a->direction + 180) % 360;
 	b->direction = (int) (a->direction + 180) % 360;
 }
+
+float asteroid_radius_by_type(int type)
+{
+	if (type == ASTEROID_SMALL)
+		return SMALL_RADIUS;
+	else if(type == ASTEROID_LARGE)
+		return LARGE_RADIUS;
+	else
+		assert(0);
+}

@@ -225,13 +225,16 @@ static void
 respawn_asteroids(void)
 {
 	int i, aux, type, create, n_asteroids;
-	float x, y, direction;
+	float x, y, direction, radius;
 	struct asteroid *a;
 
 	srand(time(NULL));
 
 	type = rand() % 2;
+
 	n_asteroids = list_size(asteroid_list);
+
+	radius = asteroid_radius_by_type(type);
 	
 	if (n_asteroids == MAX_ASTEROIDS)
 		return;
@@ -240,29 +243,28 @@ respawn_asteroids(void)
 
 	for (i = create; i > 0; i--) {
 		aux = rand() % 4;
-		a = asteroid_new(x, y, 0, type);
 
 		if (aux == TOP) {
 			x = rand() % WINDOW_WIDTH;
-			y = 0 - 2*a->radius;
+			y = 0 - 2*radius;
 			direction = (rand() % 180);
 		} else if (aux == RIGHT) {
-			x = WINDOW_WIDTH + 2*a->radius;
+			x = WINDOW_WIDTH + 2*radius;
 			y = rand() % WINDOW_HEIGHT;
 			direction = 90.0 + (rand() % 180);
 		} else if (aux == BOTTOM) {
 			x = rand() % WINDOW_WIDTH;
-			y = WINDOW_HEIGHT + 2*a->radius;
+			y = WINDOW_HEIGHT + 2*radius;
 			direction = 181.0 + (rand() % 180);
 		} else if (aux == LEFT) {
-			x = 0 - 2*a->radius;
+			x = 0 - 2*radius;
 			y = rand() % WINDOW_HEIGHT;
 			direction = (270 + (rand() % 180)) % 360;
 		} else {
 			abort();
 		}		
 	
-		asteroid_set_direction(a, direction);
+		a = asteroid_new(x, y, direction, type);
 		
 		list_add(asteroid_list, (void *) a);
 		asteroid_obound_count--;

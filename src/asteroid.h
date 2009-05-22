@@ -32,6 +32,7 @@ void asteroid_remove(struct asteroid *a);
 void asteroid_set_direction(struct asteroid *a, float direction);
 void asteroid_collide(struct asteroid *a, struct asteroid *b);
 
+float asteroid_radius_by_type(int type);
 
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h);
 
