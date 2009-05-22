@@ -1,6 +1,8 @@
 #ifndef ASTEROID_H
 #define ASTEROID_H
 
+#include "vector2d.h"
+
 enum asteroid_type
 {
 	ASTEROID_SMALL,
@@ -16,6 +18,10 @@ struct asteroid
 	float direction;
 	float radius;
 
+	struct vector2d dir;
+
+	float speed;
+
 	int remove;
 	int type;
 
@@ -23,14 +29,14 @@ struct asteroid
 };
 
 struct asteroid *
-asteroid_new(float x, float y, float direction, int type);
+asteroid_new(float x, float y, float direction, int type, float speed);
 
 void asteroid_destroy(struct asteroid *a);
 void asteroid_draw(struct asteroid *a);
 void asteroid_update(struct asteroid *a);
 void asteroid_remove(struct asteroid *a);
 void asteroid_set_direction(struct asteroid *a, float direction);
-void asteroid_collide(struct asteroid *a, struct asteroid *b);
+void asteroid_collide(struct asteroid *a, const struct asteroid *b);
 
 float asteroid_radius_by_type(int type);
 

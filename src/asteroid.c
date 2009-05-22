@@ -7,10 +7,12 @@
 #include "util.h"
 #include "texture.h"
 
-static const float ASTEROID_SPEED = 1.f;
 static const float MIN_RADIUS = 20.f;
 static const float SMALL_RADIUS = 64.0;
 static const float LARGE_RADIUS = 64.0;
+
+static const int MAX_MASS = 20;
+static const int FUDGE_FACTOR = 100.f;
 
 static GLuint small_texture;
 static GLuint large_texture;
@@ -39,7 +41,7 @@ delete_texture(void)
 }
 
 struct asteroid *
-asteroid_new(float x, float y, float direction, int type)
+asteroid_new(float x, float y, float direction, int type, float speed)
 {
 	struct asteroid *a;
 
@@ -49,6 +51,9 @@ asteroid_new(float x, float y, float direction, int type)
 	a->y = y;
 	a->direction = direction;
 	a->remove = 0;
+	a->speed = speed;
+
+	asteroid_set_direction(a, direction);
 
 	load_texture();
 
@@ -112,13 +117,8 @@ void asteroid_draw(struct asteroid *a)
 
 void asteroid_update(struct asteroid *a)
 {
-	float rad;
-
-	rad = deg_to_rad(a->direction);
-
-	a->x += cos(rad)*ASTEROID_SPEED;
-	a->y += sin(rad)*ASTEROID_SPEED;
-
+	a->x += a->dir.x;
+	a->y += a->dir.y;
 }
 
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h)
@@ -138,14 +138,26 @@ void asteroid_remove(struct asteroid *a)
 
 void asteroid_set_direction(struct asteroid *a, float direction)
 {
-	a->direction = direction;
+	float rad;
+
+	rad = deg_to_rad(direction);
+
+	a->dir.x = cos(rad)*a->speed;
+	a->dir.y = sin(rad)*a->speed;
 }
 
-void asteroid_collide(struct asteroid *a, struct asteroid *b)
+void asteroid_collide(struct asteroid *a, const struct asteroid *b)
 {
-	/* TODO:  fix me, because I suck! */
-	a->direction = (int) (a->direction + 180) % 360;
-	b->direction = (int) (a->direction + 180) % 360;
+	struct vector2d dir;
+	float len;
+
+	dir.x = b->x - a->x;
+	dir.y = b->y - a->y;
+
+	len = dir.x*dir.x + dir.y*dir.y;
+	
+	a->dir.x = -FUDGE_FACTOR*dir.x/(1 + len);
+	a->dir.y = -FUDGE_FACTOR*dir.y/(1 + len);
 }
 
 float asteroid_radius_by_type(int type)

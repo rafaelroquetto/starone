@@ -225,12 +225,10 @@ static void
 respawn_asteroids(void)
 {
 	int i, aux, type, create, n_asteroids;
-	float x, y, direction, radius;
+	float x, y, direction, radius, speed;
 	struct asteroid *a;
 
 	srand(time(NULL));
-
-	type = rand() % 2;
 
 	n_asteroids = list_size(asteroid_list);
 
@@ -263,8 +261,10 @@ respawn_asteroids(void)
 		} else {
 			abort();
 		}		
-	
-		a = asteroid_new(x, y, direction, type);
+
+		type = rand() % 2;
+		speed = 1;
+		a = asteroid_new(x, y, direction, type, speed);
 		
 		list_add(asteroid_list, (void *) a);
 		asteroid_obound_count--;
@@ -431,6 +431,7 @@ static void
 create_asteroids(void)
 {
 	int i, x, y, direction, type;
+	float speed;
 	struct asteroid *a;
 
 	srand(time(NULL));
@@ -444,8 +445,9 @@ create_asteroids(void)
 		y = rand() % WINDOW_HEIGHT;
 		type = rand() % 2;
 		direction = rand() % 360;
+		speed = (3 + (rand() % 201)) / 200.0;
 
-		a = asteroid_new(x, y, direction, type);
+		a = asteroid_new(x, y, direction, type, speed);
 
 		list_add(asteroid_list, (void *) a);
 	}
