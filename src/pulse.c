@@ -5,10 +5,10 @@
 #include "list.h"
 #include "color.h"
 
-enum { N_PARTICLES = 100};
+enum { N_PARTICLES = 200};
 
 static const float PARTICLE_ACCEL = -0.8;
-static const float PARTICLE_SPEED = 12.0;
+static const float PARTICLE_SPEED = 16.0;
 static const struct color BLUE = { 0.0, 0.7, 1.0, 1.0 };
 
 static void

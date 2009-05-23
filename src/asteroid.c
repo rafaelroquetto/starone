@@ -169,3 +169,20 @@ float asteroid_radius_by_type(int type)
 	else
 		assert(0);
 }
+
+int asteroid_hit_asteroid(const struct asteroid *a,
+		const struct asteroid *b)
+{
+	float d_square;
+	float r_square;
+	float dx = (b->x - a->x);
+	float dy = (b->y - a->y);
+
+	d_square = dx*dx + dy*dy;
+
+	r_square = a->radius;
+	r_square *= r_square;
+
+	return (d_square < r_square);
+}
+

@@ -39,6 +39,7 @@ bindir = $(basedir)/bin
 SOURCES= \
 asteroid.c \
 beam.c \
+collisions.c \
 color.c \
 explosion.c \
 list.c \
@@ -53,6 +54,7 @@ util.c
 OBJS= \
 asteroid.o \
 beam.o \
+collisions.o \
 color.o \
 explosion.o \
 list.o \

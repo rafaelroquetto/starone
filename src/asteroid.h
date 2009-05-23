@@ -2,6 +2,8 @@
 #define ASTEROID_H
 
 #include "vector2d.h"
+#include <GL/gl.h>
+
 
 enum asteroid_type
 {
@@ -41,5 +43,7 @@ void asteroid_collide(struct asteroid *a, const struct asteroid *b);
 float asteroid_radius_by_type(int type);
 
 int asteroid_out_of_bounds(struct asteroid *a, int w, int h);
+int asteroid_hit_asteroid(const struct asteroid *a,
+		const struct asteroid *b);
 
 #endif /* ASTEROID_H */

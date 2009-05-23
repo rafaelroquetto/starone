@@ -20,6 +20,7 @@
 #include "list.h"
 #include "util.h"
 #include "defs.h"
+#include "collisions.h"
 
 enum Borders {
 	TOP,
@@ -57,6 +58,7 @@ static struct list *explosion_list = NULL;
 static unsigned asteroid_obound_count = 0;
 
 static unsigned pad_state;
+static unsigned pad2_state;
 
 
 static void
@@ -114,46 +116,13 @@ tear_down_sdl(void)
 	SDL_Quit();
 }
 
-static int
-beam_hit_asteroid(const struct beam *b,
-		const struct asteroid *a)
-{
-	float d_square;
-	float r_square;
-	float dx = (b->x - a->x);
-	float dy = (b->y - a->y);
-
-	d_square = dx*dx + dy*dy;
-
-	r_square = a->radius;
-	r_square *= r_square;
-
-	return (d_square < r_square);
-}
-
-static int
-asteroid_hit_asteroid(const struct asteroid *a,
-		const struct asteroid *b)
-{
-	float d_square;
-	float r_square;
-	float dx = (b->x - a->x);
-	float dy = (b->y - a->y);
-
-	d_square = dx*dx + dy*dy;
-
-	r_square = a->radius;
-	r_square *= r_square;
-
-	return (d_square < r_square);
-}
-
 static void
 create_explosion(float x, float y)
 {
 	struct explosion *e;
 
-	if (explosion_list == NULL) explosion_list = list_new();
+	if (explosion_list == NULL) 
+		explosion_list = list_new();
 
 	
 	e = explosion_new(x, y);
@@ -162,62 +131,20 @@ create_explosion(float x, float y)
 }
 
 static void
-check_beam_collisions(void)
+asteroid_collision_callback(struct asteroid *a,
+		struct beam *b)
 {
-	struct asteroid *asteroid;
-	struct beam *beam;
-
-	struct node *b;
-	struct node *a;
-	struct list *beam_list = ship_get_beam_list(enterprise);
-
-	for (b = beam_list->first; b; b = b->next) {
-
-		beam = (struct beam *) b->data;
-
-		for (a = asteroid_list->first; a; a = a->next) {
-
-			asteroid = (struct asteroid *) a->data;
-
-			if (beam_hit_asteroid(beam, asteroid)) {
-				create_explosion(asteroid->x, asteroid->y);
-				asteroid_remove(asteroid);
-				beam_remove(beam);
-
-			}
-		}
-	}
-}
-
-static void
-check_asteroid_collisions(void)
-{
-	struct node *a;
-	struct node *b;
-	struct asteroid *current;
-	struct asteroid *iterator;
-
-	for (a = asteroid_list->first; a; a = a->next) {
-		current = (struct asteroid *) a->data;
-
-		for (b = asteroid_list->first; b; b = b->next) {
-			iterator = (struct asteroid *) b->data;
-
-			if (iterator == current)
-				continue;
-
-			if (asteroid_hit_asteroid(current, iterator)) {
-				asteroid_collide(current, iterator);
-			}
-		}
-	}
+	create_explosion(a->x, a->y);
+	asteroid_remove(a);
+	beam_remove(b);
 }
 
 static void
 check_collisions(void)
 {
-	check_beam_collisions();
-	check_asteroid_collisions();
+	check_beam_collisions(ship_list, asteroid_list,
+			asteroid_collision_callback);
+	check_asteroid_collisions(asteroid_list);
 }
 
 
@@ -458,6 +385,9 @@ static void
 initialize_data(void)
 {
 	enterprise = create_ship(50, 50);
+	enterprise2 = create_ship(200, 200);
+	ship_set_color(enterprise2, 0.3, 1.0, 1.0);
+
 	explosion_list = list_new();
 
 	create_asteroids();
@@ -502,9 +432,21 @@ handle_events(void)
 					} else if (event.key.keysym.sym == SDLK_RIGHT) {
 						pad_state |= PAD_RIGHT;
 					} else if (event.key.keysym.sym == SDLK_SPACE) {
-							pad_state |= PAD_FIRE;
+						pad_state |= PAD_FIRE;
 					} else if (event.key.keysym.sym == SDLK_m) {
-							pad_state |= PAD_PULSE;
+						pad_state |= PAD_PULSE;
+					} else if (event.key.keysym.sym == SDLK_w) {
+						pad2_state |= PAD_UP;
+					} else if (event.key.keysym.sym == SDLK_s) {
+						pad2_state |= PAD_DOWN;
+					} else if (event.key.keysym.sym == SDLK_a) {
+						pad2_state |= PAD_LEFT;
+					} else if (event.key.keysym.sym == SDLK_d) {
+						pad2_state |= PAD_RIGHT;
+					} else if (event.key.keysym.sym == SDLK_q) {
+						pad2_state |= PAD_FIRE;
+					} else if (event.key.keysym.sym == SDLK_e) {
+						pad2_state |= PAD_PULSE;
 					} else if (event.key.keysym.sym == SDLK_ESCAPE) {
 						running = 0;
 					}
@@ -523,6 +465,18 @@ handle_events(void)
 						pad_state &= ~PAD_FIRE;
 					} else if (event.key.keysym.sym == SDLK_m) {
 						pad_state &= ~PAD_PULSE;
+					} else if (event.key.keysym.sym == SDLK_w) {
+						pad2_state &= ~PAD_UP;
+					} else if (event.key.keysym.sym == SDLK_s) {
+						pad2_state &= ~PAD_DOWN;
+					} else if (event.key.keysym.sym == SDLK_a) {
+						pad2_state &= ~PAD_LEFT;
+					} else if (event.key.keysym.sym == SDLK_d) {
+						pad2_state &= ~PAD_RIGHT;
+					} else if (event.key.keysym.sym == SDLK_q) {
+						pad2_state &= ~PAD_FIRE;
+					} else if (event.key.keysym.sym == SDLK_e) {
+						pad2_state &= ~PAD_PULSE;
 					}
 					break;
 
@@ -530,6 +484,10 @@ handle_events(void)
 					break;
 			}
 		}
+
+		/* TODO: move this to a single function to avoid
+		 * duplicated code
+		 */
 
 		if (pad_state & PAD_UP)
 			ship_throttle(enterprise);
@@ -540,15 +498,31 @@ handle_events(void)
 		if (pad_state & PAD_RIGHT)
 			ship_rotate_cw(enterprise);
 		if (pad_state & PAD_FIRE) {
-			if (ship_can_fire(enterprise)) {
-				ship_fire_front(enterprise);
-			}
+			ship_fire_front(enterprise);
 		}
 		if (pad_state & PAD_PULSE) {
 			if (ship_can_pulse(enterprise)) {
 				ship_pulse(enterprise);
 			}
 		}
+
+		if (pad2_state & PAD_UP)
+			ship_throttle(enterprise2);
+		if (pad2_state & PAD_DOWN)
+			ship_break_and_reverse(enterprise2);
+		if (pad2_state & PAD_LEFT)
+			ship_rotate_countercw(enterprise2);
+		if (pad2_state & PAD_RIGHT)
+			ship_rotate_cw(enterprise2);
+		if (pad2_state & PAD_FIRE) {
+			ship_fire_front(enterprise2);
+		}
+		if (pad2_state & PAD_PULSE) {
+			if (ship_can_pulse(enterprise2)) {
+				ship_pulse(enterprise2);
+			}
+		}
+
 
 		redraw();
 		check_collisions();

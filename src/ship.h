@@ -4,6 +4,14 @@
 #include "beam.h"
 #include "list.h"
 
+enum 
+{
+	RED,
+	GREEN,
+	BLUE,
+	RGB
+};
+
 struct ship
 {
 	int x;
@@ -14,6 +22,7 @@ struct ship
 	float angle;
 	float speed;
 	float accel;
+	float color[RGB];
 
 	struct list *beam_list;
 	struct list *pulse_list;
@@ -23,6 +32,7 @@ struct ship *ship_new(int x, int y);
 
 void ship_destroy(struct ship *s);
 void ship_init(struct ship *s, int x, int y);
+void ship_set_color(struct ship *s, float r, float g, float b);
 void ship_draw(const struct ship *s);
 void ship_move_forward(struct ship *s);
 void ship_rotate_cw(struct ship *s);
@@ -33,7 +43,6 @@ void ship_throttle(struct ship *s);
 void ship_break_and_reverse(struct ship *s);
 void ship_pulse(struct ship *s);
 
-int ship_can_fire(const struct ship *s);
 int ship_can_pulse(const struct ship *s);
 
 struct list *

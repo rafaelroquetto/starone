@@ -147,6 +147,13 @@ update_pulses(struct ship *s)
 	}
 }
 
+static int
+ship_can_fire(const struct ship *s)
+{
+	return (s->beam_count == 0);
+}
+
+
 struct ship *
 ship_new(int x, int y)
 {
@@ -185,11 +192,22 @@ void ship_init(struct ship *s, int x, int y)
 	s->pulse_list = list_new();
 	s->can_pulse = 1;
 	s->accel = 0;
+
+	ship_set_color(s, 1.0, 1.0, 1.0);
+}
+
+void ship_set_color(struct ship *s, float r, float g, float b)
+{
+	s->color[RED] = r;
+	s->color[GREEN] = g;
+	s->color[BLUE] = b;
 }
 
 void ship_draw(const struct ship *s)
 {
-	glColor3f(1, 1, 1);
+	glColor3f(s->color[RED], 
+		s->color[GREEN],
+		s->color[BLUE]);
 
 	glPushMatrix();
 	glLoadIdentity();
@@ -294,9 +312,11 @@ void ship_update(struct ship *s)
 
 void ship_fire_front(struct ship *s)
 {
-	create_beam(s);
+	if (ship_can_fire(s)) {
+		create_beam(s);
 
-	s->beam_count = INI_BEAM_COUNT;
+		s->beam_count = INI_BEAM_COUNT;
+	}
 }
 
 void ship_pulse(struct ship *s)
@@ -304,11 +324,6 @@ void ship_pulse(struct ship *s)
 	create_pulse(s);
 
 	s->can_pulse = 0;
-}
-
-int ship_can_fire(const struct ship *s)
-{
-	return (s->beam_count == 0);
 }
 
 struct list *
