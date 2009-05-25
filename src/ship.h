@@ -42,6 +42,7 @@ void ship_fire_front(struct ship *s);
 void ship_throttle(struct ship *s);
 void ship_break_and_reverse(struct ship *s);
 void ship_pulse(struct ship *s);
+void ship_respawn(struct ship *s);
 
 int ship_can_pulse(const struct ship *s);
 

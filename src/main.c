@@ -140,11 +140,22 @@ asteroid_collision_callback(struct asteroid *a,
 }
 
 static void
+asteroid_ship_collision_callback(struct asteroid *a,
+		struct ship *s)
+{
+	create_explosion(a->x, a->y);
+	asteroid_remove(a);
+	ship_respawn(s);
+}
+
+static void
 check_collisions(void)
 {
 	check_beam_collisions(ship_list, asteroid_list,
 			asteroid_collision_callback);
-	check_asteroid_collisions(asteroid_list);
+	check_asteroid_collisions(asteroid_list, ship_list, 
+			asteroid_collide, 
+			asteroid_ship_collision_callback);
 }
 
 
@@ -270,6 +281,7 @@ update_ships(void)
 	current = ship_list->first;
 
 	while (current) {
+
 		s = (struct ship *) current->data;
 		ship_update(s);
 

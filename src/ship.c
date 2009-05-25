@@ -336,3 +336,10 @@ int ship_can_pulse(const struct ship *s)
 {
 	return (s->can_pulse == 1);
 }
+
+void ship_respawn(struct ship *s)
+{
+	s->x = rand() % WINDOW_WIDTH;
+	s->y = rand() % WINDOW_HEIGHT;
+	s->speed =  MAX_SPEED;
+}

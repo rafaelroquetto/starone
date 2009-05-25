@@ -4,15 +4,45 @@
 #include "beam.h"
 #include "list.h"
 
-void check_asteroid_collisions(const struct list *asteroid_list)
+static int
+asteroid_hit_ship(const struct asteroid *a,
+		const struct ship *s)
+{
+	float d_square;
+	float r_square;
+	float dx = (s->x - a->x);
+	float dy = (s->y - a->y);
+
+	d_square = dx*dx + dy*dy;
+
+	r_square = a->radius;
+	r_square *= r_square;
+
+	return (d_square < r_square);
+}
+
+void check_asteroid_collisions(const struct list *asteroid_list,
+		const struct list *ship_list,
+		aa_callback aa_cld_callback, as_callback as_cld_callback)
 {
 	struct node *a;
 	struct node *b;
+	struct node *s;
 	struct asteroid *current;
 	struct asteroid *iterator;
+	struct ship *sh;
 
 	for (a = asteroid_list->first; a; a = a->next) {
 		current = (struct asteroid *) a->data;
+
+		/* check for ship collisions */
+		for (s = ship_list->first; s; s = s->next) {
+			sh = (struct ship *) s->data;
+
+			if (asteroid_hit_ship(current, sh)) {
+				as_cld_callback(current, sh);
+			}
+		}
 
 		for (b = asteroid_list->first; b; b = b->next) {
 			iterator = (struct asteroid *) b->data;
@@ -21,7 +51,7 @@ void check_asteroid_collisions(const struct list *asteroid_list)
 				continue;
 
 			if (asteroid_hit_asteroid(current, iterator)) {
-				asteroid_collide(current, iterator);
+				aa_cld_callback(current, iterator);
 			}
 		}
 	}
@@ -47,8 +77,7 @@ beam_hit_asteroid(const struct beam *b,
 static void
 check_ship_beam_collisions(struct ship *sh,
 	       const struct list *asteroid_list,
-	       void (*callback)(struct asteroid *a,
-		       struct beam *b))
+	       ab_callback callback)
 {
 	struct asteroid *asteroid;
 	struct beam *beam;
