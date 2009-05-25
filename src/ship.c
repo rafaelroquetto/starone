@@ -18,6 +18,7 @@ static const float INI_SPEED = 7.0;
 static const float MAX_SPEED = 15.0;
 static const float SHIP_THROTTLE = 3.0;
 static const float SHIP_FRICTION = .5;
+static const float FUDGE_FACTOR = 15.0;
 static const int INI_BEAM_COUNT = 5;
 
 static GLuint texture;
@@ -192,6 +193,7 @@ void ship_init(struct ship *s, int x, int y)
 	s->pulse_list = list_new();
 	s->can_pulse = 1;
 	s->accel = 0;
+	s->radius = SHIP_WIDTH;
 
 	ship_set_color(s, 1.0, 1.0, 1.0);
 }
@@ -251,8 +253,8 @@ void ship_move_forward(struct ship *s)
 
 	rad = deg_to_rad(s->angle);
 
-	s->x += cos(rad)*s->speed;
-	s->y += sin(rad)*s->speed;
+	s->x += s->dir.x;
+	s->y += s->dir.y;
 }
 
 void ship_throttle(struct ship *s)
@@ -298,6 +300,7 @@ void ship_rotate_countercw(struct ship *s)
 
 void ship_update(struct ship *s)
 {
+	ship_set_direction(s, s->angle);
 	ship_move_forward(s);
 
 	ship_deaccel(s);
@@ -342,4 +345,21 @@ void ship_respawn(struct ship *s)
 	s->x = rand() % WINDOW_WIDTH;
 	s->y = rand() % WINDOW_HEIGHT;
 	s->speed =  MAX_SPEED;
+}
+
+void ship_collide(struct ship *a, const struct ship *b)
+{
+	/* TODO: fix me, this is crap */
+	a->speed = -a->speed;
+}
+
+void ship_set_direction(struct ship *a, float direction)
+{
+	float rad;
+
+	rad = deg_to_rad(direction);
+
+	a->dir.x = cos(rad)*a->speed;
+	a->dir.y = sin(rad)*a->speed;
+	a->angle = direction;
 }

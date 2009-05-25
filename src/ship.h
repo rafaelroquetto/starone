@@ -3,6 +3,7 @@
 
 #include "beam.h"
 #include "list.h"
+#include "vector2d.h"
 
 enum 
 {
@@ -22,7 +23,10 @@ struct ship
 	float angle;
 	float speed;
 	float accel;
+	float radius;
 	float color[RGB];
+
+	struct vector2d dir;
 
 	struct list *beam_list;
 	struct list *pulse_list;
@@ -43,6 +47,8 @@ void ship_throttle(struct ship *s);
 void ship_break_and_reverse(struct ship *s);
 void ship_pulse(struct ship *s);
 void ship_respawn(struct ship *s);
+void ship_collide(struct ship *a, const struct ship *b);
+void ship_set_direction(struct ship *a, float direction);
 
 int ship_can_pulse(const struct ship *s);
 

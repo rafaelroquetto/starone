@@ -153,9 +153,12 @@ check_collisions(void)
 {
 	check_beam_collisions(ship_list, asteroid_list,
 			asteroid_collision_callback);
+
 	check_asteroid_collisions(asteroid_list, ship_list, 
 			asteroid_collide, 
 			asteroid_ship_collision_callback);
+
+	check_ship_collisions(ship_list, ship_collide);
 }
 
 

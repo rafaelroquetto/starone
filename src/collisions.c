@@ -116,3 +116,41 @@ void check_beam_collisions(const struct list *ship_list,
 	}
 }
 
+static int
+ships_collide(const struct ship *a, const struct ship *b)
+{
+	float d_square;
+	float r_square;
+	float dx = (b->x - a->x);
+	float dy = (b->y - a->y);
+
+	d_square = dx*dx + dy*dy;
+
+	r_square = a->radius;
+	r_square *= r_square;
+
+	return (d_square < r_square);
+}
+
+void check_ship_collisions(const struct list *ship_list,
+		ss_callback callback)
+{
+	struct node *current;
+	struct node *iterator;
+	struct ship *current_ship;
+	struct ship *iter_ship;
+
+	for (current = ship_list->first; current; current = current->next) {
+		current_ship = (struct ship *) current->data;
+
+		for (iterator = ship_list->first; iterator; iterator = iterator->next) {
+			iter_ship = (struct ship *) iterator->data;
+
+			if (iter_ship == current_ship)
+				continue;
+
+			if (ships_collide(iter_ship, current_ship))
+				callback(iter_ship, current_ship);
+		}
+	}
+}
