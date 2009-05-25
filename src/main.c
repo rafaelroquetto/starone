@@ -1,3 +1,9 @@
+/*
+ * main.c - Main game logic
+ *
+ * Authors:	Rafael Roquetto
+ * 		Nicoli Gavassa
+ */
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -21,6 +27,10 @@
 #include "util.h"
 #include "defs.h"
 #include "collisions.h"
+
+/*
+ * CONSTANTS AND ENUMERATIONS
+ */
 
 enum Borders {
 	TOP,

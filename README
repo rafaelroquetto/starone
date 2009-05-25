@@ -1,0 +1,74 @@
+A NOTE ON THE PUBLIC API
+========================
+
+Even though this game has not been
+written in a object oriented language
+(we should've gone for C++, but it was too
+late when we realized that), we tried to
+stick as much as possible with encapsulation
+standards.
+We have achieved that by publishing
+the objects public APIs at their
+respective header files, with proper
+documentation.
+
+All functions internal to a single 
+module, i.e., which are not supposed
+to be accessed outside the module boundaries
+have been marked as 'static', thus explicitly
+forcing module encapsulation and
+orthogonality. For instance,
+in order to prevent a ship
+from firing beams continously,
+the ship implementation relies
+on an internal function, whose
+prototype follows:
+
+static int
+ship_can_fire(const struct ship *s);
+
+This is  function is never accessed
+by outsiders, for it relies on internal
+module logic, and is indirectly used by
+ship_fire_front() function, part of the
+public API.
+
+Please bear in mind we do not mean to
+implement OO features such as inheritance
+and polymorphism, because it would have
+made sense to port everything to C++.
+However, we do want to highlight we
+tried to keep things as modular as possible,
+as long as they didn't compel us to do black
+magic (and obfuscating the code).
+
+
+
+BUILD INSTRUCTIONS
+=====================
+
+First, configure and generate Makefiles:
+
+$ ./configure --prefix=<INSTALL_PATH>
+
+then make it:
+
+$ make
+
+and finally install it
+
+$ make install
+
+Build dependencies: libsdl, libgl (or mesagl), libglu and libpng.
+(configure script should warn you if any of these are missing)
+
+In order to run the game:
+
+$ cd <INSTALL_PATH>/starone
+$ ./starone
+
+Enjoy :)
+
+Rafael Roquetto
+Nicoli Gavassa
+May 25, 2009.
