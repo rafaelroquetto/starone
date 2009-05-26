@@ -15,9 +15,11 @@
 enum asteroid_type
 {
 	ASTEROID_SMALL,
-	ASTEROID_LARGE
+	ASTEROID_MEDIUM,
+	ASTEROID_LARGE,
+	CRYSTAL,
+	NUM_ASTERORID_TYPES
 };
-
 
 struct asteroid
 {
@@ -95,5 +97,8 @@ int asteroid_out_of_bounds(struct asteroid *a, int w, int h);
  */
 int asteroid_hit_asteroid(const struct asteroid *a,
 		const struct asteroid *b);
+
+/* returns the asteroid type */
+int asteroid_type(const struct asteroid *a);
 
 #endif /* ASTEROID_H */

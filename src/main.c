@@ -154,8 +154,17 @@ asteroid_ship_collision_callback(struct asteroid *a,
 		struct ship *s)
 {
 	create_explosion(a->x, a->y);
-	asteroid_remove(a);
 	ship_respawn(s);
+	asteroid_remove(a);
+	
+}
+
+static void
+asteroid_crystal_collision_callback(struct asteroid *a,
+		struct ship *s)
+{
+	/* TODO: draw effects */
+	asteroid_remove(a);
 }
 
 static void
@@ -166,7 +175,8 @@ check_collisions(void)
 
 	check_asteroid_collisions(asteroid_list, ship_list, 
 			asteroid_collide, 
-			asteroid_ship_collision_callback);
+			asteroid_ship_collision_callback,
+			asteroid_crystal_collision_callback);
 
 	check_ship_collisions(ship_list, ship_collide);
 }
@@ -213,7 +223,7 @@ respawn_asteroids(void)
 			abort();
 		}		
 
-		type = rand() % 2;
+		type = rand() % NUM_ASTERORID_TYPES;
 		speed = 1;
 		a = asteroid_new(x, y, direction, type, speed);
 		
@@ -297,6 +307,9 @@ update_ships(void)
 
 		s = (struct ship *) current->data;
 		ship_update(s);
+		
+		if(ship_hit_bounds(s, WINDOW_WIDTH, WINDOW_HEIGHT))
+			s->speed = -s->speed*1.5;
 
 		current = current->next;
 	}
@@ -395,7 +408,7 @@ create_asteroids(void)
 	for (i = 0; i < MIN_ASTEROIDS; i++) {
 		x = rand() % WINDOW_WIDTH;
 		y = rand() % WINDOW_HEIGHT;
-		type = rand() % 2;
+		type = rand() % NUM_ASTERORID_TYPES;
 		direction = rand() % 360;
 		speed = (3 + (rand() % 201)) / 200.0;
 

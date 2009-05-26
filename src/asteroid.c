@@ -8,8 +8,9 @@
 #include "texture.h"
 
 static const float MIN_RADIUS = 20.f;
-static const float SMALL_RADIUS = 64.0;
-static const float LARGE_RADIUS = 64.0;
+static const float SMALL_RADIUS = 54.0;
+static const float MEDIUM_RADIUS = 64.0;
+static const float LARGE_RADIUS = 74.0;
 
 static const int MAX_MASS = 20;
 static const int FUDGE_FACTOR = 100.f;
@@ -24,7 +25,7 @@ load_texture(void)
 	assert(obj_count >= 0);
 
 	if (obj_count == 0) {
-		small_texture = load_texture_from_png("res/asteroid3.png");
+		small_texture = load_texture_from_png("res/asteroid.png");
 		large_texture = load_texture_from_png("res/asteroid2.png");
 	}
 }
@@ -52,6 +53,7 @@ asteroid_new(float x, float y, float direction, int type, float speed)
 	a->direction = direction;
 	a->remove = 0;
 	a->speed = speed;
+	a->type = type;
 
 	asteroid_set_direction(a, direction);
 
@@ -59,9 +61,17 @@ asteroid_new(float x, float y, float direction, int type, float speed)
 
 	if (type == ASTEROID_SMALL) {
 		a->radius = SMALL_RADIUS;
-		a->texture = &small_texture;
 	} else if (type == ASTEROID_LARGE) {
 		a->radius = LARGE_RADIUS;
+	} else if (type == ASTEROID_MEDIUM) {
+		a->radius = MEDIUM_RADIUS;
+	} else if (type == CRYSTAL) {
+		a->radius = SMALL_RADIUS;
+	}
+
+	if (type == CRYSTAL) {
+		a->texture = &small_texture;
+	} else {
 		a->texture = &large_texture;
 	}
 
@@ -184,5 +194,11 @@ int asteroid_hit_asteroid(const struct asteroid *a,
 	r_square *= r_square;
 
 	return (d_square < r_square);
+}
+
+int asteroid_type(const struct asteroid *a)
+{
+	assert(a);
+	return a->type;
 }
 

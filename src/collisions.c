@@ -23,7 +23,8 @@ asteroid_hit_ship(const struct asteroid *a,
 
 void check_asteroid_collisions(const struct list *asteroid_list,
 		const struct list *ship_list,
-		aa_callback aa_cld_callback, as_callback as_cld_callback)
+		aa_callback aa_cld_callback, as_callback as_cld_callback,
+		as_callback ac_cld_callback)
 {
 	struct node *a;
 	struct node *b;
@@ -40,7 +41,10 @@ void check_asteroid_collisions(const struct list *asteroid_list,
 			sh = (struct ship *) s->data;
 
 			if (asteroid_hit_ship(current, sh)) {
-				as_cld_callback(current, sh);
+				if (asteroid_type(current) == CRYSTAL) 
+					ac_cld_callback(current, sh);
+				else
+					as_cld_callback(current, sh);
 			}
 		}
 
@@ -153,4 +157,21 @@ void check_ship_collisions(const struct list *ship_list,
 				callback(iter_ship, current_ship);
 		}
 	}
+}
+
+static int 
+point_out_of_bounds(int x, int y, int w, int h)
+{
+	return (x < 0 || x > w || y < 0 || y > h);
+}
+
+int ship_hit_bounds(struct ship *a, int w, int h)
+{
+
+	return (point_out_of_bounds(a->x, a->y+SHIP_WIDTH, w, h) ||
+		point_out_of_bounds(a->x-SHIP_WIDTH, a->y-SHIP_WIDTH, w, h) ||
+			point_out_of_bounds(a->x+SHIP_WIDTH, a->y-SHIP_WIDTH, w, h));
+
+	
+	/* TODO if vertex ou of bounds forward/reverse */
 }

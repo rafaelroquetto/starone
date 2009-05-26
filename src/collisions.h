@@ -44,9 +44,12 @@ typedef void (ss_callback)(struct ship *a,
  * In case a collision is found, the related callback 
  * function is called, with the two colliding objects
  * passed as arguments
+ * as_cld_callback is called in case the object type == ASTEROID
+ * ac_cld_callback is called in case the object type == CRYSTAL
  */
 void check_asteroid_collisions(const struct list *asteroid_list, const struct list *ship_list,
-		aa_callback aa_cld_callback, as_callback as_cld_callback);
+		aa_callback aa_cld_callback, as_callback as_cld_callback,
+		as_callback ac_cld_callback);
 
 /* iterates over the lists pointed by ship_list and asteroid_list,
  * and checks for beam-asteroid collisions.
