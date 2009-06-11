@@ -42,6 +42,7 @@ beam.c \
 collisions.c \
 color.c \
 explosion.c \
+gameplay.c \
 list.c \
 main.c \
 panic.c \
@@ -57,6 +58,7 @@ beam.o \
 collisions.o \
 color.o \
 explosion.o \
+gameplay.o \
 list.o \
 main.o \
 panic.o \
