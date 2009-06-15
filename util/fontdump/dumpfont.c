@@ -87,10 +87,11 @@ write_png(const char *filename, FT_Bitmap bitmap)
 	FILE *fp;
 	png_structp png_ptr;
 	png_infop info_ptr;
-	int i;
+	int i, j;
 	unsigned char *row;
+	unsigned char *q;
        
-	row = malloc(bitmap.pitch);
+	row = malloc(bitmap.width*3);
 
 	if ((fp = fopen(filename, "wb")) == NULL)
 		panic("Cannot open '%s'.", filename);
@@ -118,7 +119,7 @@ write_png(const char *filename, FT_Bitmap bitmap)
 
 	png_set_IHDR(png_ptr, info_ptr,
 			bitmap.width, bitmap.rows, 8,
-			PNG_COLOR_TYPE_GRAY,
+			PNG_COLOR_TYPE_RGB,
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_DEFAULT,
 			PNG_FILTER_TYPE_DEFAULT);
@@ -128,8 +129,15 @@ write_png(const char *filename, FT_Bitmap bitmap)
 	if (setjmp(png_jmpbuf(png_ptr))) 
 		panic("png_setjmpbuf failed.");
 
+	q = bitmap.buffer;
+
 	for (i = 0; i < bitmap.rows; i++) {
-		memcpy(row, &bitmap.buffer[i*bitmap.pitch], bitmap.pitch);
+		unsigned char  *p = row;
+		for (j = 0; j < bitmap.width; j++) {
+			*p++ = *q;
+			*p++ = *q;
+			*p++ = *q++;
+		}
 		png_write_row(png_ptr, (png_bytep) row);
 	}
 
