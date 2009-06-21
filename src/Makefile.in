@@ -28,8 +28,8 @@ RANLIB = @RANLIB@
 
 CC = @CC@
 CFLAGS = -I. @CFLAGS@ `sdl-config --cflags`
-LDFLAGS = @LDFLAGS@ `sdl-config --libs`
-LIBS = @LIBS@
+LDFLAGS = @LDFLAGS@ 
+LIBS = @LIBS@ `sdl-config --libs`
 INSTALL = install
 prefix = @prefix@
 exec_prefix = @exec_prefix@
@@ -42,9 +42,13 @@ beam.c \
 collisions.c \
 color.c \
 explosion.c \
+font.c \
 gameplay.c \
+label.c \
 list.c \
 main.c \
+mainmenu.c \
+menu.c \
 panic.c \
 particle.c \
 pulse.c \
@@ -58,9 +62,13 @@ beam.o \
 collisions.o \
 color.o \
 explosion.o \
+font.o \
 gameplay.o \
+label.o \
 list.o \
 main.o \
+mainmenu.o \
+menu.o \
 panic.o \
 particle.o \
 pulse.o \

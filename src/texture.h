@@ -11,6 +11,6 @@
  * file pointed by filename
  * and returns a handle to it
  */
-GLuint load_texture_from_png(const char *filename);
+GLuint load_texture_from_png(const char *filename, int *width, int *height);
 
 #endif /* TEXTURE_H */

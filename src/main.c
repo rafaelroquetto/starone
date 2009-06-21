@@ -31,7 +31,13 @@ enum State
 	MAIN_MENU
 };
 
-static const char *WINDOW_CAPTION = "Shitty game";
+enum ReturnValues
+{
+	QUIT = 1,
+	NEWGAME = 2
+};
+
+static const char *WINDOW_CAPTION = "Star One";
 
 static void
 initialize_sdl(void)
@@ -39,7 +45,7 @@ initialize_sdl(void)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, /* SDL_FULLSCREEN | */SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_FULLSCREEN | SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -92,6 +98,7 @@ static void
 tear_down(void)
 {
 	tear_down_gameplay();
+	tear_down_mainmenu();
 	tear_down_sdl();
 }
 
@@ -102,33 +109,47 @@ initialize(int argc, char *argv[])
 	initialize_sdl();
 	initialize_opengl();
 	initialize_gameplay_data();
+	initialize_mainmenu_data();
 }
 
 static void
 handle_events(void)
 {
 	int running = 1;
-	int status = GAMEPLAY;
+	int status = MAIN_MENU;
 	unsigned prev_ticks;
 
 	while (running) {
 		SDL_Event event;
 		int delay;
+		int response;
 
 		prev_ticks = SDL_GetTicks();
 
 		while (SDL_PollEvent(&event)) {
 			if (status == GAMEPLAY) {
-				int rv = handle_gameplay_events(event);
+				response = handle_gameplay_events(event);
 
-				if (rv == 1)
+				if (response == QUIT)
 					running = 0;
+			} else if (status == MAIN_MENU) {
+				response = handle_mainmenu_events(event);
+
+				if (response == QUIT) {
+					running = 0;
+				} else if (response == NEWGAME) {
+					status = GAMEPLAY;
+					continue;
+				}
 			}
 		}
 
 
-		if (status == GAMEPLAY)
+		if (status == GAMEPLAY) {
 			handle_gameplay_updates();
+		} else if (status == MAIN_MENU) {
+			handle_mainmenu_updates();
+		}
 
 		delay = 1000/FPS - (SDL_GetTicks() - prev_ticks);
 

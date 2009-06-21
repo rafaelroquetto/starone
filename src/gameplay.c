@@ -1,5 +1,5 @@
 /*
- * main.c - Main game logic
+ * gameplay.c - Main game logic
  *
  * Authors:	Rafael Roquetto
  * 		Nicoli Gavassa

@@ -25,8 +25,8 @@ load_texture(void)
 	assert(obj_count >= 0);
 
 	if (obj_count == 0) {
-		small_texture = load_texture_from_png("res/asteroid.png");
-		large_texture = load_texture_from_png("res/asteroid2.png");
+		small_texture = load_texture_from_png("res/asteroid.png", NULL, NULL);
+		large_texture = load_texture_from_png("res/asteroid2.png", NULL, NULL);
 	}
 }
 

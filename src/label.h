@@ -1,0 +1,22 @@
+#ifndef LABEL_H
+#define LABEL_H
+
+#include "font.h"
+
+struct label
+{
+	struct font *font;
+	char *text;
+
+	int x;
+	int y;
+};
+
+struct label *
+label_new(const char *text, int x, int y,
+		struct font *f);
+
+void label_draw(struct label *l);
+void label_destroy(struct label *l);
+
+#endif /* LABEL_H */

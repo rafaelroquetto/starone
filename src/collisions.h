@@ -23,19 +23,19 @@ typedef void (*ab_callback)(struct asteroid *a,
 /* callback function type for
  * asteroid-asteroid collision
  */
-typedef void (aa_callback)(struct asteroid *a,
+typedef void (*aa_callback)(struct asteroid *a,
 		struct asteroid *b);
 
 /* callback function type for
  * asteroid-ship collision
  */
-typedef void (as_callback)(struct asteroid *a,
+typedef void (*as_callback)(struct asteroid *a,
 		struct ship *s);
 
 /* callback function type for
  * ship-ship collision
  */
-typedef void (ss_callback)(struct ship *a,
+typedef void (*ss_callback)(struct ship *a,
 		struct ship *s);
 
 /* iterates over the lists pointed by asteroid_list and ship_list,

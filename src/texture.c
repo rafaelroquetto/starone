@@ -147,7 +147,7 @@ image_to_opengl_texture(const struct image *image)
 	return texture_id;
 }
 
-GLuint load_texture_from_png(const char *filename)
+GLuint load_texture_from_png(const char *filename, int *width, int *height)
 {
 	struct image *image;
 	GLuint texture;
@@ -155,6 +155,12 @@ GLuint load_texture_from_png(const char *filename)
 	image = image_make_from_png(filename);
 
 	texture = image_to_opengl_texture(image);
+
+	if (width)
+		*width = image->width;
+
+	if (height)
+		*height = image->height;
 
 	image_free(image);
 

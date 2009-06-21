@@ -22,7 +22,7 @@ load_texture(void)
 	assert(obj_count >= 0);
 
 	if (obj_count == 0)
-		texture = load_texture_from_png("res/particle.png");
+		texture = load_texture_from_png("res/particle.png", NULL, NULL);
 }
 
 static void

@@ -31,7 +31,7 @@ load_texture(void)
 	assert(obj_count >= 0);
 
 	if (obj_count == 0)
-		texture = load_texture_from_png("res/ship.png");
+		texture = load_texture_from_png("res/ship.png", NULL, NULL);
 }
 
 static void
@@ -218,11 +218,11 @@ void ship_draw(const struct ship *s)
 	glRotatef(s->angle, 0, 0, 1);
 
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE);
 
+	glBindTexture(GL_TEXTURE_2D, texture);
 	glBegin(GL_QUADS);
 
 	glTexCoord2f(0.0, 0.0);

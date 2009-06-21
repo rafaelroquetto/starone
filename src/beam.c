@@ -20,7 +20,7 @@ load_texture(void)
 	assert(obj_count >= 0);
 
 	if (obj_count == 0)
-		texture = load_texture_from_png("res/beam.png");
+		texture = load_texture_from_png("res/beam.png", NULL, NULL);
 }
 
 static void
