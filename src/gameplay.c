@@ -25,6 +25,8 @@
 #include "list.h"
 #include "defs.h"
 #include "collisions.h"
+#include "label.h"
+#include "font.h"
 
 /*
  * CONSTANTS AND ENUMERATIONS
@@ -62,6 +64,12 @@ static struct list *asteroid_list = NULL;
 static struct list *explosion_list = NULL;
 
 static unsigned asteroid_obound_count = 0;
+
+static struct label *score_label1 = NULL;
+
+static struct label *score_label2 = NULL;
+
+static struct font *font = NULL;
 
 static unsigned pad_state;
 static unsigned pad2_state;
@@ -254,6 +262,29 @@ update_ships(void)
 }
 
 static void
+update_lives(void)
+{
+	int ship1_lives;
+	int ship2_lives;
+	char buf[16];
+
+	ship1_lives = ship_get_lives(enterprise);
+	ship2_lives = ship_get_lives(enterprise2);
+
+	snprintf(buf, sizeof buf, "%d", ship1_lives);
+
+	if (ship1_lives >= 0) {
+		label_set_text(score_label1, buf);
+	}
+
+	snprintf(buf, sizeof buf, "%d", ship2_lives);
+
+	if (ship2_lives >= 0) {
+		label_set_text(score_label2, buf);
+	}
+}
+
+static void
 draw_ships(void)
 {
 	struct node *c;
@@ -307,6 +338,9 @@ do_test(void)
 	draw_ships();
 	draw_asteroids();
 	draw_explosions();
+	
+	label_draw(score_label1);
+	label_draw(score_label2);
 }
 
 static void
@@ -361,6 +395,11 @@ void initialize_gameplay_data(void)
 {
 	enterprise = create_ship(50, 50);
 	enterprise2 = create_ship(200, 200);
+
+	font = font_new("ngage");
+	score_label1 = label_new("0", 10, 10, font);
+	score_label2 = label_new("0", WINDOW_WIDTH - 100, 10, font);
+
 	ship_set_color(enterprise2, 0.3, 1.0, 1.0);
 
 	explosion_list = list_new();
@@ -403,7 +442,7 @@ int handle_gameplay_events(SDL_Event event)
 			} else if (event.key.keysym.sym == SDLK_e) {
 				pad2_state |= PAD_PULSE;
 			} else if (event.key.keysym.sym == SDLK_ESCAPE) {
-				return 1;
+				return 3;
 			}
 			break;
 
@@ -483,6 +522,7 @@ void handle_gameplay_updates(void)
 	redraw();
 	check_collisions();
 	update_ships();
+	update_lives();
 	update_asteroids();
 	update_explosions();
 }
@@ -506,6 +546,9 @@ free_objects(void)
 	free_asteroids();
 	free_explosions();
 	ship_destroy(enterprise);
+	label_destroy(score_label1);
+	label_destroy(score_label2);
+	font_destroy(font);
 }
 
 void tear_down_gameplay(void)

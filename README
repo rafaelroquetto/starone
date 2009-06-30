@@ -42,7 +42,31 @@ tried to keep things as modular as possible,
 as long as they didn't compel us to do black
 magic (and obfuscating the code).
 
+A NOTE ON THE FONTS USED
+========================
 
+The source file of the font we use
+in the game (N-Gage) can be found
+in util/fontdump.
+
+We have written a small program
+called dumpfont, also located in util/fontdump
+which extracts glyphs from true type fonts
+into png files. For further information,
+refer to dumpfont's usage at the command
+prompt
+
+
+MISSING FEATURES
+================
+
+There is a TODO list in this directory.
+Unfortunately, we did not have time to
+implement a decent background, a truly
+useful menu, or a Game Over screen.
+This game might have its development
+resumed, and eventually these will be
+implemented.
 
 BUILD INSTRUCTIONS
 =====================
@@ -71,4 +95,4 @@ Enjoy :)
 
 Rafael Roquetto
 Nicoli Gavassa
-May 25, 2009.
+June 30, 2009.

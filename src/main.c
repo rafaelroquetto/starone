@@ -34,7 +34,8 @@ enum State
 enum ReturnValues
 {
 	QUIT = 1,
-	NEWGAME = 2
+	NEWGAME = 2,
+	MENU = 3
 };
 
 static const char *WINDOW_CAPTION = "Star One";
@@ -45,7 +46,7 @@ initialize_sdl(void)
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 		panic("SDL_Init: %s", SDL_GetError());
 
-	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, SDL_FULLSCREEN | SDL_OPENGL))
+	if (!SDL_SetVideoMode(WINDOW_WIDTH, WINDOW_HEIGHT, 0, /*SDL_FULLSCREEN |*/ SDL_OPENGL))
 		panic("SDL_SetVideoMode: %s", SDL_GetError());
 
 	SDL_WM_SetCaption(WINDOW_CAPTION, NULL);
@@ -130,8 +131,9 @@ handle_events(void)
 			if (status == GAMEPLAY) {
 				response = handle_gameplay_events(event);
 
-				if (response == QUIT)
-					running = 0;
+				if (response == MENU) {
+					status = MAIN_MENU;
+				}
 			} else if (status == MAIN_MENU) {
 				response = handle_mainmenu_events(event);
 
@@ -139,7 +141,6 @@ handle_events(void)
 					running = 0;
 				} else if (response == NEWGAME) {
 					status = GAMEPLAY;
-					continue;
 				}
 			}
 		}

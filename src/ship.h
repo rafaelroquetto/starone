@@ -25,6 +25,7 @@ struct ship
 	int y;
 	int beam_count;
 	int can_pulse;
+	int lives;
 
 	float angle;
 	float speed;
@@ -108,6 +109,12 @@ int ship_can_pulse(const struct ship *s);
  */
 struct list *
 ship_get_beam_list(const struct ship *s);
+
+/*
+ * returns ship lives
+ */
+
+int ship_get_lives(const struct ship *s);
 
 /* ship size */
 #define SHIP_WIDTH 25.f

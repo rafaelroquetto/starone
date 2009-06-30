@@ -36,7 +36,7 @@ void label_draw(struct label *l)
 	glTranslatef(l->x, l->y, 0);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE);
 
 	text = l->text;
 
@@ -89,4 +89,10 @@ void label_destroy(struct label *l)
 {
 	free(l->text);
 	free(l);
+}
+
+void label_set_text(struct label *l, const char *text)
+{
+	free(l->text);
+	l->text = strdup(text);
 }

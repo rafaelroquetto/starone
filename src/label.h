@@ -18,5 +18,6 @@ label_new(const char *text, int x, int y,
 
 void label_draw(struct label *l);
 void label_destroy(struct label *l);
+void label_set_text(struct label *l, const char *text);
 
 #endif /* LABEL_H */

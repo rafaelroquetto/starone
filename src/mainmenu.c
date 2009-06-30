@@ -51,12 +51,6 @@ newgame_callback(void)
 	newgame = 1;
 }
 
-static void
-settings_callback(void)
-{
-	fprintf(stderr, "settings_callback(): fixme!\n");
-}
-
 void handle_mainmenu_updates(void)
 {
 	/* SCHEISSE! */
@@ -87,8 +81,7 @@ void initialize_mainmenu_data(void)
 	menu = menu_new(30, 150, font);
 
 	menu_add_item(menu, "Quit", quit_callback);
-	menu_add_item(menu, "Settings", settings_callback);
-	menu_add_item(menu, "New Game", newgame_callback);
+	menu_add_item(menu, "Play", newgame_callback);
 }
 
 int handle_mainmenu_events(SDL_Event event)
@@ -96,8 +89,10 @@ int handle_mainmenu_events(SDL_Event event)
 	if (quit)
 		return QUIT;
 
-	if (newgame)
+	if (newgame) {
+		newgame = 0;
 		return NEWGAME;
+	}
 
 	redraw_menu = 1;
 

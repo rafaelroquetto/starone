@@ -20,6 +20,7 @@ static const float SHIP_THROTTLE = 3.0;
 static const float SHIP_FRICTION = .5;
 static const float FUDGE_FACTOR = 15.0;
 static const int INI_BEAM_COUNT = 5;
+static const int INI_LIVES = 5;
 
 static GLuint texture;
 static int obj_count = 0;
@@ -194,6 +195,7 @@ void ship_init(struct ship *s, int x, int y)
 	s->can_pulse = 1;
 	s->accel = 0;
 	s->radius = SHIP_WIDTH;
+	s->lives = INI_LIVES;
 
 	ship_set_color(s, 1.0, 1.0, 1.0);
 }
@@ -342,6 +344,7 @@ int ship_can_pulse(const struct ship *s)
 
 void ship_respawn(struct ship *s)
 {
+	s->lives--;
 	s->x = rand() % WINDOW_WIDTH;
 	s->y = rand() % WINDOW_HEIGHT;
 	s->speed =  MAX_SPEED;
@@ -362,4 +365,9 @@ void ship_set_direction(struct ship *a, float direction)
 	a->dir.x = cos(rad)*a->speed;
 	a->dir.y = sin(rad)*a->speed;
 	a->angle = direction;
+}
+
+int ship_get_lives(const struct ship *s) 
+{
+	return s->lives;
 }
