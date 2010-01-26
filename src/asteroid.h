@@ -80,7 +80,7 @@ void asteroid_set_direction(struct asteroid *a, float direction);
 /* callback: updates asteroid pointed by 'a', supposing it is
  * colliding with asteroid pointed by 'b'
  */
-void asteroid_collide(struct asteroid *a, const struct asteroid *b);
+void asteroid_collide(struct asteroid *a, struct asteroid *b);
 
 /* returns the asteroid radius by it's type */
 float asteroid_radius_by_type(int type);

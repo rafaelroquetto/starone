@@ -21,6 +21,8 @@ struct list
 	struct node *first;
 };
 
+typedef void (*list_free_func)(void *);
+
 /* returns a newly created
  * empty list
  */
@@ -45,7 +47,7 @@ void *list_remove(struct list *l, struct node *n);
  * for each element on the list, free_func
  * will be called in order to free their memory
  */
-void list_free(struct list *l, void (*free_func(void *)));
+void list_free(struct list *l, list_free_func free_func);
 
 /* returns 1 if list is empty
  * returns 0 otherwise

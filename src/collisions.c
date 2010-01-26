@@ -107,8 +107,7 @@ check_ship_beam_collisions(struct ship *sh,
 
 void check_beam_collisions(const struct list *ship_list, 
 		const struct list *asteroid_list,
-		void (*callback)(struct asteroid *a,
-			struct beam *b))
+		ab_callback callback)
 {
 	struct ship *sh;
 	struct node *a;

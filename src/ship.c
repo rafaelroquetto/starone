@@ -58,7 +58,7 @@ draw_beams(const struct ship *s)
 }
 
 static void 
-draw_pulses(struct ship *s)
+draw_pulses(const struct ship *s)
 {
 	struct node *current;
 
@@ -177,8 +177,8 @@ void ship_destroy(struct ship *s)
 	obj_count--;
 	delete_texture();
 
-	list_free(s->beam_list, beam_destroy);
-	list_free(s->pulse_list, pulse_destroy);
+	list_free(s->beam_list, (list_free_func) beam_destroy);
+	list_free(s->pulse_list, (list_free_func) pulse_destroy);
 
 	free(s);
 }
@@ -350,7 +350,7 @@ void ship_respawn(struct ship *s)
 	s->speed =  MAX_SPEED;
 }
 
-void ship_collide(struct ship *a, const struct ship *b)
+void ship_collide(struct ship *a, struct ship *b)
 {
 	/* TODO: fix me, this is crap */
 	a->speed = -a->speed;

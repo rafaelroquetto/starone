@@ -88,7 +88,7 @@ void pulse_draw(const struct pulse *p)
 
 void pulse_destroy(struct pulse *p)
 {
-	list_free(p->particles, particle_destroy);
+	list_free(p->particles, (list_free_func) particle_destroy);
 	p->particles = NULL;
 
 	free(p);

@@ -76,7 +76,7 @@ list_remove(struct list *l, struct node *n)
 
 
 void
-list_free(struct list *l, void (*free_func(void *)))
+list_free(struct list *l, list_free_func free_func)
 {
 	struct node *current;
 	struct node *next;

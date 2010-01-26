@@ -531,13 +531,13 @@ void handle_gameplay_updates(void)
 static void
 free_asteroids(void)
 {
-	list_free(asteroid_list, asteroid_destroy);
+	list_free(asteroid_list, (list_free_func) asteroid_destroy);
 }
 
 static void
 free_explosions(void)
 {
-	list_free(explosion_list, explosion_destroy);
+	list_free(explosion_list, (list_free_func) explosion_destroy);
 }
 
 static void

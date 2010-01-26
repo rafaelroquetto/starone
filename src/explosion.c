@@ -116,7 +116,7 @@ void explosion_draw(const struct explosion *e)
 
 void explosion_destroy(struct explosion *e)
 {
-	list_free(e->particles, particle_destroy);
+	list_free(e->particles, (list_free_func) particle_destroy);
 
 	if (e->pulse)
 		pulse_destroy(e->pulse);

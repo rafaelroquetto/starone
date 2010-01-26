@@ -133,7 +133,7 @@ menu_new(int x, int y, struct font *font)
 
 void menu_destroy(struct menu *m)
 {
-	list_free(m->items, menu_item_destroy);
+	list_free(m->items, (list_free_func) menu_item_destroy);
 	
 	free(m);
 }

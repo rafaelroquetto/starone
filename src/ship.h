@@ -94,7 +94,7 @@ void ship_respawn(struct ship *s);
 /* update ships 'a' supposing it is colliding
  * with ship 'b'
  */
-void ship_collide(struct ship *a, const struct ship *b);
+void ship_collide(struct ship *a, struct ship *b);
 
 /* set a new direction angle for the ship */
 void ship_set_direction(struct ship *a, float direction);

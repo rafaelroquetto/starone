@@ -156,7 +156,7 @@ void asteroid_set_direction(struct asteroid *a, float direction)
 	a->dir.y = sin(rad)*a->speed;
 }
 
-void asteroid_collide(struct asteroid *a, const struct asteroid *b)
+void asteroid_collide(struct asteroid *a, struct asteroid *b)
 {
 	struct vector2d dir;
 	float len;

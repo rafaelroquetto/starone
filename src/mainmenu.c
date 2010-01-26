@@ -9,7 +9,9 @@
 #include "mainmenu.h"
 
 #include "font.h"
-#include "label.h" #include "menu.h" 
+#include "label.h" 
+#include "menu.h" 
+
 enum {
 	QUIT = 1,
 	NEWGAME = 2

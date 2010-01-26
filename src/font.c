@@ -82,7 +82,7 @@ font_get_glyph(struct font *f, char ch)
 
 void font_destroy(struct font *f)
 {
-	list_free(f->glyphs, glyph_destroy);
+	list_free(f->glyphs, (list_free_func) glyph_destroy);
 
 	free(f);
 }
