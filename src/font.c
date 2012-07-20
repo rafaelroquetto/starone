@@ -3,6 +3,34 @@
 #include "font.h"
 #include "texture.h"
 
+static struct glyph *
+load_glyph(const char *name, char ch)
+{
+	struct glyph *g;
+	char path[256];
+
+	g = malloc(sizeof *g);
+	g->character = ch;
+
+	snprintf(path, sizeof path, "fonts/%s/%c.png", name, ch);
+
+	g->texture = load_texture_from_png(path, &g->width, &g->height);
+
+	return g;
+}
+
+static void
+load_glyph_range(const char *name, int i, int j, struct list *glyphs)
+{
+	struct glyph *g;
+	int ch;
+
+	for (ch = i; ch <= j; ch++) {
+		g = load_glyph(name, ch);
+		list_add(glyphs, (void *) g);
+	}
+}
+
 static struct list *
 load_glyphs(const char *name)
 {
@@ -13,33 +41,9 @@ load_glyphs(const char *name)
 
 	glyphs = list_new();
 	
-	printf("name: %s\n", name);
-
-	for (ch = '0'; ch <= '9'; ch++) {
-		g = malloc(sizeof *g);
-		g->character = ch;
-		snprintf(path, sizeof path, "fonts/%s/%c.png", name, ch);
-		g->texture = load_texture_from_png(path, &g->width, &g->height);
-		list_add(glyphs, (void *) g);
-	}
-
-	for (ch = 'a'; ch <= 'z'; ch++) {
-		g = malloc(sizeof *g);
-		g->character = ch;
-		snprintf(path, sizeof path, "fonts/%s/%c.png", name, ch);
-		g->texture = load_texture_from_png(path, &g->width, &g->height);
-		list_add(glyphs, (void *) g);
-	}
-
-	for (ch = 'A'; ch <= 'Z'; ch++) {
-		g = malloc(sizeof *g);
-		g->character = ch;
-		snprintf(path, sizeof path, "fonts/%s/%c.png", name, ch);
-		g->texture = load_texture_from_png(path, &g->width, &g->height);
-		list_add(glyphs, (void *) g);
-	}
-
-
+	load_glyph_range(name, '0', '9', glyphs);
+	load_glyph_range(name, 'a', 'z', glyphs);
+	load_glyph_range(name, 'A', 'Z', glyphs);
 
 	return glyphs;
 }
