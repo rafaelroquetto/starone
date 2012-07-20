@@ -1,46 +1,18 @@
-A NOTE ON THE PUBLIC API
-========================
+RESURRECTION
+============
+This project was started back in 2009
+as a university project. It was never
+finished. As of 2012, I decided to publish
+the source code and finish this game.
+There are _many_ things to be done, audio,
+a decent gameplay, a real menu, _lots_ of
+code optmization, and so on. In other other,
+this game is work in progress. There is a new
+roadmap in the works, which will be published
+soon.
 
-Even though this game has not been
-written in a object oriented language
-(we should've gone for C++, but it was too
-late when we realized that), we tried to
-stick as much as possible with encapsulation
-standards.
-We have achieved that by publishing
-the objects public APIs at their
-respective header files, with proper
-documentation.
-
-All functions internal to a single 
-module, i.e., which are not supposed
-to be accessed outside the module boundaries
-have been marked as 'static', thus explicitly
-forcing module encapsulation and
-orthogonality. For instance,
-in order to prevent a ship
-from firing beams continously,
-the ship implementation relies
-on an internal function, whose
-prototype follows:
-
-static int
-ship_can_fire(const struct ship *s);
-
-This is  function is never accessed
-by outsiders, for it relies on internal
-module logic, and is indirectly used by
-ship_fire_front() function, part of the
-public API.
-
-Please bear in mind we do not mean to
-implement OO features such as inheritance
-and polymorphism, because it would have
-made sense to port everything to C++.
-However, we do want to highlight we
-tried to keep things as modular as possible,
-as long as they didn't compel us to do black
-magic (and obfuscating the code).
+Rafael
+2012-07-20
 
 A NOTE ON THE FONTS USED
 ========================
