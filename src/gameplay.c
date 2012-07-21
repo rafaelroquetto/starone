@@ -55,8 +55,6 @@ enum {
 
 static struct ship *enterprise = NULL;
 
-static struct ship *enterprise2 = NULL;
-
 static struct list *ship_list = NULL;
 
 static struct list *asteroid_list = NULL;
@@ -65,15 +63,11 @@ static struct list *explosion_list = NULL;
 
 static unsigned asteroid_obound_count = 0;
 
-static struct label *score_label1 = NULL;
-
-static struct label *score_label2 = NULL;
+static struct label *score_label = NULL;
 
 static struct font *font = NULL;
 
 static unsigned pad_state;
-static unsigned pad2_state;
-
 
 static void
 create_explosion(float x, float y)
@@ -264,23 +258,14 @@ update_ships(void)
 static void
 update_lives(void)
 {
-	int ship1_lives;
-	int ship2_lives;
+	int ship_lives;
 	char buf[16];
 
-	ship1_lives = ship_get_lives(enterprise);
-	ship2_lives = ship_get_lives(enterprise2);
+	ship_lives = ship_get_lives(enterprise);
+	snprintf(buf, sizeof buf, "%d", ship_lives);
 
-	snprintf(buf, sizeof buf, "%d", ship1_lives);
-
-	if (ship1_lives >= 0) {
-		label_set_text(score_label1, buf);
-	}
-
-	snprintf(buf, sizeof buf, "%d", ship2_lives);
-
-	if (ship2_lives >= 0) {
-		label_set_text(score_label2, buf);
+	if (ship_lives >= 0) {
+		label_set_text(score_label, buf);
 	}
 }
 
@@ -339,8 +324,7 @@ do_test(void)
 	draw_asteroids();
 	draw_explosions();
 	
-	label_draw(score_label1);
-	label_draw(score_label2);
+	label_draw(score_label);
 }
 
 static void
@@ -394,13 +378,9 @@ create_asteroids(void)
 void initialize_gameplay_data(void)
 {
 	enterprise = create_ship(50, 50);
-	enterprise2 = create_ship(200, 200);
 
 	font = font_new("ngage");
-	score_label1 = label_new("0", 10, 10, font);
-	score_label2 = label_new("0", WINDOW_WIDTH - 100, 10, font);
-
-	ship_set_color(enterprise2, 0.3, 1.0, 1.0);
+	score_label = label_new("0", 10, 10, font);
 
 	explosion_list = list_new();
 
@@ -429,18 +409,6 @@ int handle_gameplay_events(SDL_Event event)
 				pad_state |= PAD_FIRE;
 			} else if (event.key.keysym.sym == SDLK_m) {
 				pad_state |= PAD_PULSE;
-			} else if (event.key.keysym.sym == SDLK_w) {
-				pad2_state |= PAD_UP;
-			} else if (event.key.keysym.sym == SDLK_s) {
-				pad2_state |= PAD_DOWN;
-			} else if (event.key.keysym.sym == SDLK_a) {
-				pad2_state |= PAD_LEFT;
-			} else if (event.key.keysym.sym == SDLK_d) {
-				pad2_state |= PAD_RIGHT;
-			} else if (event.key.keysym.sym == SDLK_q) {
-				pad2_state |= PAD_FIRE;
-			} else if (event.key.keysym.sym == SDLK_e) {
-				pad2_state |= PAD_PULSE;
 			} else if (event.key.keysym.sym == SDLK_ESCAPE) {
 				return 3;
 			}
@@ -459,18 +427,6 @@ int handle_gameplay_events(SDL_Event event)
 				pad_state &= ~PAD_FIRE;
 			} else if (event.key.keysym.sym == SDLK_m) {
 				pad_state &= ~PAD_PULSE;
-			} else if (event.key.keysym.sym == SDLK_w) {
-				pad2_state &= ~PAD_UP;
-			} else if (event.key.keysym.sym == SDLK_s) {
-				pad2_state &= ~PAD_DOWN;
-			} else if (event.key.keysym.sym == SDLK_a) {
-				pad2_state &= ~PAD_LEFT;
-			} else if (event.key.keysym.sym == SDLK_d) {
-				pad2_state &= ~PAD_RIGHT;
-			} else if (event.key.keysym.sym == SDLK_q) {
-				pad2_state &= ~PAD_FIRE;
-			} else if (event.key.keysym.sym == SDLK_e) {
-				pad2_state &= ~PAD_PULSE;
 			}
 			break;
 
@@ -501,24 +457,6 @@ void handle_gameplay_updates(void)
 		}
 	}
 
-	if (pad2_state & PAD_UP)
-		ship_throttle(enterprise2);
-	if (pad2_state & PAD_DOWN)
-		ship_break_and_reverse(enterprise2);
-	if (pad2_state & PAD_LEFT)
-		ship_rotate_countercw(enterprise2);
-	if (pad2_state & PAD_RIGHT)
-		ship_rotate_cw(enterprise2);
-	if (pad2_state & PAD_FIRE) {
-		ship_fire_front(enterprise2);
-	}
-	if (pad2_state & PAD_PULSE) {
-		if (ship_can_pulse(enterprise2)) {
-			ship_pulse(enterprise2);
-		}
-	}
-
-
 	redraw();
 	check_collisions();
 	update_ships();
@@ -546,8 +484,7 @@ free_objects(void)
 	free_asteroids();
 	free_explosions();
 	ship_destroy(enterprise);
-	label_destroy(score_label1);
-	label_destroy(score_label2);
+	label_destroy(score_label);
 	font_destroy(font);
 }
 
